@@ -6,152 +6,360 @@
   <title>Ter herinnering aan Willy van Veen-van Teunenbroek</title>
   <style>
     :root {
-      --cream: #fdf9f6;
-      --pink-wash: #fbe4ef;
-      --pink-soft: #f2c8de;
-      --pink-mid: #dea1c1;
-      --pink-deep: #a5688f;
-      --plum: #6b3b5c;
-      --ink: #4d3f47;
-      --ink-strong: #3d3138;
-      --ink-soft: rgba(77, 63, 71, 0.62);
+      --paper: #fbf6f1;
+      --paper-warm: #f5ede4;
+      --ink: #3d2a35;
+      --ink-warm: #4d3f47;
+      --ink-soft: rgba(77, 63, 71, 0.55);
+      --ink-hair: rgba(77, 63, 71, 0.14);
+      --plum: #4a2a3e;
+      --rose-deep: #a5688f;
+      --rose-mid: #cc8fb5;
+      --rose-soft: #f2c8de;
+      --rose-wash: #fce6ee;
+      --gold: #b89968;
+
       --serif: "Iowan Old Style", "Palatino Linotype", Palatino,
         "Book Antiqua", Georgia, serif;
       --sans: system-ui, -apple-system, "Segoe UI", sans-serif;
     }
 
-    * { box-sizing: border-box; margin: 0; padding: 0; }
-    html, body { height: 100%; overflow: hidden; }
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+    html, body {
+      height: 100%;
+      overflow: hidden;
+    }
     body {
       font-family: var(--serif);
       color: var(--ink);
-      background: var(--cream);
+      background: var(--paper);
       position: relative;
       -webkit-font-smoothing: antialiased;
+      -moz-osx-font-smoothing: grayscale;
+      font-feature-settings: "kern", "liga", "onum";
     }
 
-    /* ambient background — shifts colour per slide type */
-    .env {
+    /* ─── AMBIENT — orchid photograph as the atmosphere ─── */
+    .ambient {
       position: fixed;
-      inset: 0;
+      inset: -8%;
       z-index: 0;
-      transition: background 2.4s cubic-bezier(0.4, 0, 0.2, 1);
+      overflow: hidden;
     }
-    .env.front {
-      background:
-        radial-gradient(90% 70% at 50% 30%, #ffffff 0%, #fdf9f6 60%, #fbe4ef 100%);
+    .ambient img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      object-position: center 30%;
+      filter: blur(24px) saturate(0.9) brightness(1.08);
+      transform: scale(1.15);
+      animation: kbAmbient 90s ease-in-out infinite alternate;
     }
-    .env.inside {
-      background:
-        radial-gradient(80% 60% at 30% 50%, #f5cddf 0%, #e4b0cc 55%, #cc8fb5 100%);
+    @keyframes kbAmbient {
+      0%   { transform: scale(1.15) translate(0, 0); }
+      100% { transform: scale(1.28) translate(-1.5%, -1%); }
     }
-    .env.photo {
+    /* creamy wash + vignette over ambient so text always reads */
+    .ambient::after {
+      content: "";
+      position: absolute;
+      inset: 0;
       background:
-        radial-gradient(60% 55% at 50% 40%, #fdf1f6 0%, #f2c8de 60%, #dea1c1 100%);
+        radial-gradient(85% 70% at 50% 45%, rgba(251, 246, 241, 0.72) 0%, rgba(251, 246, 241, 0.45) 55%, rgba(251, 246, 241, 0.85) 100%),
+        radial-gradient(65% 55% at 50% 50%, transparent 40%, rgba(74, 42, 62, 0.18) 100%);
     }
 
-    /* faint grain for depth */
+    /* grain */
     body::after {
       content: "";
       position: fixed;
       inset: 0;
-      background-image: url("data:image/svg+xml;utf8,%3Csvg xmlns='http://www.w3.org/2000/svg' width='300' height='300'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='2' stitchTiles='stitch'/%3E%3CfeColorMatrix values='0 0 0 0 0.3 0 0 0 0 0.2 0 0 0 0 0.3 0 0 0 0.05 0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
-      opacity: 0.4;
+      background-image: url("data:image/svg+xml;utf8,%3Csvg xmlns='http://www.w3.org/2000/svg' width='240' height='240'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2' stitchTiles='stitch'/%3E%3CfeColorMatrix values='0 0 0 0 0.24 0 0 0 0 0.16 0 0 0 0 0.22 0 0 0 0.04 0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+      opacity: 0.5;
       mix-blend-mode: multiply;
       pointer-events: none;
       z-index: 2;
     }
 
-    /* vignette */
-    body::before {
-      content: "";
-      position: fixed;
-      inset: 0;
-      background: radial-gradient(85% 75% at 50% 50%, transparent 45%, rgba(80, 40, 60, 0.12) 100%);
-      pointer-events: none;
-      z-index: 3;
-    }
-
+    /* ─── STAGE ─── */
     .stage {
       position: relative;
-      height: 100vh;
       width: 100vw;
+      height: 100vh;
       display: grid;
       place-items: center;
       z-index: 5;
     }
 
-    .foto {
+    .slide {
       position: absolute;
       inset: 0;
       opacity: 0;
-      transition: opacity 2s cubic-bezier(0.4, 0, 0.2, 1);
-      display: grid;
-      place-items: center;
       pointer-events: none;
-    }
-    .foto.actief { opacity: 1; pointer-events: auto; }
-
-    /* Rouwkaart hero — the card as a physical object */
-    .kaart-hero {
-      position: relative;
+      transition: opacity 1.6s cubic-bezier(0.4, 0, 0.2, 1);
       display: grid;
       place-items: center;
-      max-width: 96vw;
+      padding: 80px 40px;
     }
-    .kaart-hero img {
-      max-height: 92vh;
-      max-width: 96vw;
+    .slide.active { opacity: 1; pointer-events: auto; }
+
+    /* ─── EDITORIAL COMPOSITIONS ─── */
+    .comp {
+      display: grid;
+      justify-items: center;
+      text-align: center;
+      max-width: 900px;
+      width: 100%;
+    }
+    .comp > * {
+      opacity: 0;
+      transform: translateY(14px);
+    }
+    .slide.active .comp > *:nth-child(1) { animation: rise 1.4s 0.15s cubic-bezier(0.2, 0.7, 0.3, 1) forwards; }
+    .slide.active .comp > *:nth-child(2) { animation: rise 1.4s 0.35s cubic-bezier(0.2, 0.7, 0.3, 1) forwards; }
+    .slide.active .comp > *:nth-child(3) { animation: rise 1.4s 0.55s cubic-bezier(0.2, 0.7, 0.3, 1) forwards; }
+    .slide.active .comp > *:nth-child(4) { animation: rise 1.4s 0.75s cubic-bezier(0.2, 0.7, 0.3, 1) forwards; }
+    .slide.active .comp > *:nth-child(5) { animation: rise 1.4s 0.95s cubic-bezier(0.2, 0.7, 0.3, 1) forwards; }
+    @keyframes rise {
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    /* Eyebrow — tiny wide-tracked label */
+    .eyebrow {
+      font-family: var(--sans);
+      font-size: 11px;
+      letter-spacing: 0.42em;
+      text-transform: uppercase;
+      color: var(--rose-deep);
+      margin-bottom: 44px;
+    }
+    .eyebrow.gold { color: var(--gold); }
+
+    /* Hero name — italic serif at large scale */
+    .name-hero {
+      font-family: var(--serif);
+      font-style: italic;
+      font-weight: 400;
+      font-size: clamp(76px, 12vw, 176px);
+      line-height: 0.9;
+      color: var(--ink);
+      letter-spacing: -0.015em;
+      text-wrap: balance;
+      font-feature-settings: "kern", "liga", "dlig";
+    }
+
+    /* Full name */
+    .name-full {
+      font-family: var(--serif);
+      font-style: italic;
+      font-weight: 400;
+      font-size: clamp(38px, 5.6vw, 76px);
+      line-height: 1.05;
+      color: var(--ink);
+      letter-spacing: -0.005em;
+      text-wrap: balance;
+      max-width: 900px;
+    }
+    .name-full .first {
+      display: block;
+      font-style: normal;
+      font-size: 0.68em;
+      color: var(--ink-warm);
+      letter-spacing: 0;
+      margin-bottom: 12px;
+      opacity: 0.85;
+    }
+
+    /* Dates row */
+    .dates {
+      font-family: var(--sans);
+      font-size: 12px;
+      letter-spacing: 0.34em;
+      color: var(--ink-warm);
+      margin-top: 44px;
+      font-variant-numeric: tabular-nums;
+    }
+    .dates.big {
+      font-size: 15px;
+    }
+
+    /* Places row */
+    .places {
+      display: flex;
+      align-items: center;
+      gap: 32px;
+      font-family: var(--serif);
+      font-style: italic;
+      font-size: clamp(14px, 1.35vw, 18px);
+      color: var(--ink-warm);
+      margin-top: 40px;
+      letter-spacing: 0.02em;
+    }
+    .places .sym {
+      color: var(--rose-deep);
+      font-family: var(--serif);
+      font-style: normal;
+      margin-right: 10px;
+    }
+    .places .divider {
+      width: 4px;
+      height: 4px;
+      background: var(--rose-deep);
+      border-radius: 50%;
+      opacity: 0.6;
+    }
+
+    /* Ornamental rule with orchid mark */
+    .rule {
+      display: grid;
+      grid-template-columns: 1fr auto 1fr;
+      align-items: center;
+      gap: 20px;
+      width: 260px;
+      max-width: 100%;
+      margin: 28px 0;
+    }
+    .rule::before, .rule::after {
+      content: "";
+      height: 1px;
+      background: linear-gradient(90deg, transparent, var(--rose-deep) 50%, transparent);
+      opacity: 0.5;
+    }
+    .rule svg {
+      width: 16px;
+      height: 16px;
+      color: var(--rose-deep);
+      opacity: 0.75;
+    }
+
+    /* Poem — the elegy */
+    .poem {
+      font-family: var(--serif);
+      font-style: italic;
+      font-weight: 400;
+      font-size: clamp(24px, 3vw, 40px);
+      line-height: 1.42;
+      color: var(--ink);
+      max-width: 780px;
+      text-wrap: balance;
+    }
+    .poem .line { display: block; }
+
+    /* Widow's name */
+    .widow-label {
+      font-family: var(--sans);
+      font-size: 12px;
+      letter-spacing: 0.4em;
+      text-transform: uppercase;
+      color: var(--ink-soft);
+      margin-bottom: 32px;
+    }
+    .widow-name {
+      font-family: var(--serif);
+      font-style: italic;
+      font-weight: 400;
+      font-size: clamp(56px, 8vw, 110px);
+      line-height: 0.95;
+      color: var(--ink);
+      letter-spacing: -0.01em;
+      text-wrap: balance;
+    }
+
+    /* Family grid */
+    .family {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 64px;
+      max-width: 640px;
+      margin-top: 8px;
+      text-align: left;
+    }
+    .family .col {
+      display: grid;
+      gap: 20px;
+      align-content: start;
+    }
+    .family .fam {
+      display: block;
+    }
+    .family .parents {
+      font-family: var(--serif);
+      font-size: clamp(17px, 1.6vw, 22px);
+      color: var(--ink);
+      line-height: 1.3;
+      font-feature-settings: "kern", "liga";
+    }
+    .family .kids {
+      font-family: var(--serif);
+      font-style: italic;
+      font-size: clamp(14px, 1.35vw, 18px);
+      color: var(--ink-soft);
+      margin-top: 6px;
+      padding-left: 20px;
+      line-height: 1.4;
+    }
+
+    /* Rouwkaart image slides — the physical card as a slide */
+    .kaart-showcase {
+      display: grid;
+      place-items: center;
+      gap: 24px;
+    }
+    .kaart-showcase .eyebrow { margin-bottom: 0; }
+    .kaart-showcase .card-wrap {
+      position: relative;
+      max-width: 92vw;
+      max-height: 74vh;
+      display: grid;
+      place-items: center;
+    }
+    .kaart-showcase img {
+      max-height: 74vh;
+      max-width: 92vw;
       width: auto;
       height: auto;
       display: block;
-      animation: kb 24s ease-in-out infinite alternate;
-      filter: drop-shadow(0 30px 60px rgba(140, 60, 110, 0.15))
-             drop-shadow(0 10px 25px rgba(140, 60, 110, 0.08));
-    }
-    @keyframes kb {
-      0%   { transform: scale(1); }
-      100% { transform: scale(1.035); }
+      box-shadow:
+        0 40px 80px -20px rgba(74, 42, 62, 0.25),
+        0 15px 30px -12px rgba(74, 42, 62, 0.15);
+      filter: contrast(1.02);
     }
 
-    /* Uploaded photo */
-    .photo-hero {
-      position: relative;
-      width: 100vw;
-      height: 100vh;
+    /* Photo slide (from Supabase) */
+    .photo-slide {
       display: grid;
       place-items: center;
+      gap: 32px;
+      width: 100%;
     }
-    .photo-hero img {
-      max-width: 86vw;
-      max-height: 84vh;
+    .photo-slide img {
+      max-height: 78vh;
+      max-width: 90vw;
       display: block;
-      animation: kb 24s ease-in-out infinite alternate;
-      filter: drop-shadow(0 40px 80px rgba(140, 60, 110, 0.25));
+      box-shadow:
+        0 40px 80px -20px rgba(74, 42, 62, 0.35),
+        0 15px 30px -12px rgba(74, 42, 62, 0.18);
+      animation: kbPhoto 24s ease-in-out infinite alternate;
     }
-    .photo-hero .bijschrift {
-      position: absolute;
-      bottom: 90px;
-      left: 0;
-      right: 0;
-      text-align: center;
+    @keyframes kbPhoto {
+      0%   { transform: scale(1); }
+      100% { transform: scale(1.04); }
+    }
+    .photo-slide .bijschrift {
       font-family: var(--serif);
       font-style: italic;
-      font-size: clamp(16px, 1.5vw, 22px);
-      color: var(--ink);
-      padding: 0 40px;
+      font-size: clamp(16px, 1.6vw, 22px);
+      color: var(--ink-warm);
+      text-align: center;
+      max-width: 700px;
       text-wrap: balance;
-      opacity: 0;
-    }
-    .foto.actief .photo-hero .bijschrift {
-      animation: capFade 2.5s 1s ease-out forwards;
-    }
-    @keyframes capFade {
-      from { opacity: 0; transform: translateY(8px); }
-      to   { opacity: 1; transform: translateY(0); }
     }
 
-    /* Chrome — auto-hide */
+    /* ─── CHROME (auto-hide) ─── */
     .chrome {
       position: fixed;
       inset: 0;
@@ -165,18 +373,17 @@
 
     .mark {
       position: absolute;
-      top: 32px;
-      left: 40px;
+      top: 34px;
+      left: 44px;
       display: flex;
       align-items: center;
       gap: 12px;
-      color: var(--pink-deep);
     }
-    .mark svg { width: 20px; height: 20px; opacity: 0.75; }
+    .mark svg { width: 18px; height: 18px; color: var(--rose-deep); opacity: 0.75; }
     .mark .txt {
       font-family: var(--sans);
       font-size: 9px;
-      letter-spacing: 0.36em;
+      letter-spacing: 0.42em;
       text-transform: uppercase;
       color: var(--ink-soft);
       line-height: 1.4;
@@ -184,67 +391,90 @@
 
     .actions {
       position: absolute;
-      top: 32px;
+      top: 30px;
       right: 40px;
       display: flex;
       gap: 8px;
     }
-
     .icon-btn {
       width: 40px;
       height: 40px;
       border-radius: 50%;
       border: 1px solid rgba(77, 63, 71, 0.14);
-      background: rgba(255, 255, 255, 0.6);
-      backdrop-filter: blur(14px);
-      -webkit-backdrop-filter: blur(14px);
+      background: rgba(251, 246, 241, 0.55);
+      backdrop-filter: blur(16px) saturate(1.1);
+      -webkit-backdrop-filter: blur(16px) saturate(1.1);
       cursor: pointer;
       display: grid;
       place-items: center;
-      color: var(--pink-deep);
+      color: var(--rose-deep);
       transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
       font-family: var(--sans);
     }
     .icon-btn:hover {
-      background: var(--pink-deep);
+      background: var(--rose-deep);
       color: white;
       transform: translateY(-1px);
     }
-    .icon-btn:focus-visible { outline: 2px solid var(--pink-deep); outline-offset: 3px; }
+    .icon-btn:focus-visible { outline: 2px solid var(--rose-deep); outline-offset: 3px; }
     .icon-btn svg { width: 14px; height: 14px; }
 
     .controls {
       position: absolute;
-      bottom: 36px;
+      bottom: 38px;
       left: 50%;
       transform: translateX(-50%);
       display: flex;
       align-items: center;
-      gap: 6px;
+      gap: 4px;
       padding: 6px 12px;
-      background: rgba(255, 255, 255, 0.55);
+      background: rgba(251, 246, 241, 0.5);
       border: 1px solid rgba(77, 63, 71, 0.1);
       border-radius: 999px;
-      backdrop-filter: blur(18px);
-      -webkit-backdrop-filter: blur(18px);
+      backdrop-filter: blur(20px) saturate(1.1);
+      -webkit-backdrop-filter: blur(20px) saturate(1.1);
     }
     .controls .icon-btn { border: none; background: transparent; }
     .controls .icon-btn.groot {
-      background: var(--pink-deep);
+      background: var(--plum);
       color: white;
       width: 44px; height: 44px;
     }
-    .controls .icon-btn.groot:hover { background: var(--plum); }
+    .controls .icon-btn.groot:hover { background: var(--ink); }
     .teller {
       font-family: var(--sans);
       font-size: 10px;
       color: var(--ink-soft);
-      padding: 0 12px 0 10px;
-      letter-spacing: 0.28em;
+      padding: 0 14px 0 10px;
+      letter-spacing: 0.32em;
       font-variant-numeric: tabular-nums;
     }
 
-    /* Setup screen */
+    /* Progress dots */
+    .progress {
+      position: absolute;
+      bottom: 24px;
+      left: 50%;
+      transform: translateX(-50%);
+      display: flex;
+      gap: 6px;
+      pointer-events: none;
+    }
+    .progress .dot {
+      width: 5px;
+      height: 5px;
+      border-radius: 50%;
+      background: var(--ink-soft);
+      opacity: 0.3;
+      transition: all 0.4s ease;
+    }
+    .progress .dot.active {
+      opacity: 1;
+      background: var(--rose-deep);
+      transform: scale(1.3);
+    }
+
+    /* ─── SETUP ─── */
     .laden, .setup {
       text-align: center;
       padding: 60px 40px;
@@ -253,42 +483,46 @@
       z-index: 5;
     }
     .setup h1 {
-      font-size: 40px;
+      font-family: var(--serif);
+      font-style: italic;
+      font-size: 48px;
       color: var(--ink);
-      margin-bottom: 12px;
+      margin-bottom: 16px;
       font-weight: 400;
     }
     .setup p.intro { margin-bottom: 30px; line-height: 1.6; font-style: italic; }
     .setup .stap {
       margin-bottom: 18px;
-      padding: 20px;
+      padding: 24px;
       background: rgba(255, 255, 255, 0.7);
       border-radius: 12px;
-      border: 1px solid var(--pink-soft);
+      border: 1px solid var(--rose-soft);
       text-align: left;
     }
     .setup .stap h3 {
       color: var(--ink);
       font-size: 20px;
-      margin-bottom: 6px;
+      margin-bottom: 8px;
       font-weight: 400;
+      font-family: var(--serif);
+      font-style: italic;
     }
-    .setup .stap p { color: var(--ink-soft); font-size: 14px; line-height: 1.6; margin-bottom: 6px; }
+    .setup .stap p { color: var(--ink-soft); font-size: 14px; line-height: 1.7; margin-bottom: 6px; }
     code {
       font-family: ui-monospace, "SF Mono", Menlo, monospace;
-      background: var(--pink-wash);
+      background: var(--rose-wash);
       padding: 2px 6px;
       border-radius: 4px;
       font-size: 13px;
-      color: var(--pink-deep);
+      color: var(--rose-deep);
     }
 
-    /* Modal */
+    /* ─── MODAL ─── */
     .modal-bg {
       position: fixed;
       inset: 0;
-      background: rgba(77, 40, 60, 0.4);
-      backdrop-filter: blur(8px);
+      background: rgba(74, 42, 62, 0.5);
+      backdrop-filter: blur(10px);
       display: none;
       align-items: center;
       justify-content: center;
@@ -298,54 +532,54 @@
     .modal-bg.zichtbaar { display: flex; }
     .modal {
       background: white;
-      border-radius: 16px;
-      padding: 40px;
+      border-radius: 4px;
+      padding: 48px;
       max-width: 500px;
       width: 100%;
-      box-shadow: 0 30px 60px -20px rgba(140, 90, 130, 0.35);
+      box-shadow: 0 40px 80px -20px rgba(74, 42, 62, 0.4);
       max-height: 90vh;
       overflow-y: auto;
     }
     .modal h2 {
       font-family: var(--serif);
-      font-size: 28px;
+      font-style: italic;
+      font-size: 32px;
       color: var(--ink);
-      margin-bottom: 8px;
+      margin-bottom: 12px;
       font-weight: 400;
     }
     .modal p.uitleg {
       color: var(--ink-soft);
       font-size: 14px;
-      margin-bottom: 24px;
-      line-height: 1.6;
-      font-style: italic;
+      margin-bottom: 28px;
+      line-height: 1.7;
     }
-    .veld { margin-bottom: 18px; }
+    .veld { margin-bottom: 20px; }
     .veld label {
       display: block;
       font-family: var(--sans);
-      font-size: 11px;
+      font-size: 10px;
       color: var(--ink-soft);
-      margin-bottom: 6px;
-      letter-spacing: 0.22em;
+      margin-bottom: 8px;
+      letter-spacing: 0.28em;
       text-transform: uppercase;
     }
     .veld input, .veld textarea {
       width: 100%;
       padding: 12px 16px;
-      border: 1px solid var(--pink-soft);
-      border-radius: 8px;
+      border: 1px solid var(--rose-soft);
+      border-radius: 6px;
       font-family: var(--sans);
       font-size: 14px;
       color: var(--ink);
-      background: var(--cream);
+      background: var(--paper);
       transition: all 0.2s ease;
     }
     .veld input:focus, .veld textarea:focus {
       outline: none;
-      border-color: var(--pink-deep);
+      border-color: var(--rose-deep);
       background: white;
-      box-shadow: 0 0 0 3px rgba(165, 104, 143, 0.12);
+      box-shadow: 0 0 0 3px rgba(165, 104, 143, 0.1);
     }
     .veld textarea {
       resize: vertical;
@@ -355,38 +589,44 @@
       font-size: 16px;
     }
     .drop-zone {
-      border: 2px dashed var(--pink-mid);
-      border-radius: 12px;
-      padding: 40px 20px;
+      border: 1px dashed var(--rose-mid);
+      border-radius: 8px;
+      padding: 44px 20px;
       text-align: center;
       cursor: pointer;
       transition: all 0.2s ease;
-      background: var(--pink-wash);
-      margin-bottom: 18px;
+      background: var(--rose-wash);
+      margin-bottom: 20px;
     }
     .drop-zone:hover, .drop-zone.actief {
-      border-color: var(--pink-deep);
-      background: var(--pink-soft);
+      border-color: var(--rose-deep);
+      background: var(--rose-soft);
     }
-    .drop-zone p { color: var(--ink-soft); font-size: 14px; }
+    .drop-zone p {
+      color: var(--ink-warm);
+      font-family: var(--serif);
+      font-size: 15px;
+      line-height: 1.5;
+    }
+    .drop-zone p strong { font-weight: 400; font-style: italic; }
     .drop-zone svg {
-      width: 40px; height: 40px;
-      color: var(--pink-deep);
-      margin-bottom: 12px;
+      width: 36px; height: 36px;
+      color: var(--rose-deep);
+      margin-bottom: 14px;
       opacity: 0.7;
     }
     .preview-lijst {
       display: grid;
       grid-template-columns: repeat(auto-fill, minmax(80px, 1fr));
       gap: 8px;
-      margin-bottom: 18px;
+      margin-bottom: 20px;
     }
     .preview {
       position: relative;
       aspect-ratio: 1;
-      border-radius: 6px;
+      border-radius: 4px;
       overflow: hidden;
-      background: var(--pink-wash);
+      background: var(--rose-wash);
     }
     .preview img { width: 100%; height: 100%; object-fit: cover; }
     .preview .verwijder {
@@ -394,69 +634,85 @@
       top: 4px; right: 4px;
       width: 20px; height: 20px;
       border-radius: 50%;
-      background: rgba(77, 40, 60, 0.8);
+      background: rgba(74, 42, 62, 0.85);
       color: white;
       border: none;
       cursor: pointer;
       display: grid;
       place-items: center;
       font-size: 12px;
+      line-height: 1;
     }
     .modal-acties {
       display: flex;
       gap: 10px;
       justify-content: flex-end;
-      margin-top: 24px;
+      margin-top: 28px;
     }
     .knop {
-      background: var(--pink-deep);
+      background: var(--plum);
       color: white;
       border: none;
-      padding: 12px 28px;
+      padding: 13px 32px;
       border-radius: 999px;
       font-family: var(--sans);
-      font-size: 13px;
+      font-size: 12px;
       cursor: pointer;
       transition: all 0.3s ease;
-      letter-spacing: 0.05em;
+      letter-spacing: 0.14em;
+      text-transform: uppercase;
     }
-    .knop:hover { background: var(--plum); transform: translateY(-1px); }
+    .knop:hover { background: var(--ink); transform: translateY(-1px); }
     .knop.secundair {
       background: transparent;
-      color: var(--pink-deep);
-      border: 1px solid var(--pink-deep);
+      color: var(--plum);
+      border: 1px solid var(--plum);
     }
-    .knop.secundair:hover { background: var(--pink-deep); color: white; }
+    .knop.secundair:hover { background: var(--plum); color: white; }
     .knop:disabled { opacity: 0.5; cursor: wait; transform: none; }
     .melding {
       padding: 12px 16px;
-      border-radius: 8px;
+      border-radius: 6px;
       font-size: 13px;
-      margin-bottom: 18px;
+      margin-bottom: 20px;
       display: none;
       font-family: var(--sans);
     }
     .melding.zichtbaar { display: block; }
     .melding.fout { background: #fce8ee; color: #a83a55; border: 1px solid #f5c8d0; }
-    .melding.info { background: var(--pink-wash); color: var(--pink-deep); border: 1px solid var(--pink-soft); }
+    .melding.info { background: var(--rose-wash); color: var(--rose-deep); border: 1px solid var(--rose-soft); }
 
     @media (prefers-reduced-motion: reduce) {
-      .foto { transition-duration: 0.001s; }
-      .kaart-hero img, .photo-hero img { animation: none; }
+      .slide { transition-duration: 0.001s; }
+      .ambient img, .photo-slide img { animation: none; }
+      .slide.active .comp > * { opacity: 1; transform: none; animation: none; }
     }
+
     @media (max-width: 780px) {
-      .mark, .actions { top: 20px; }
-      .mark { left: 20px; }
-      .actions { right: 20px; }
+      .mark { top: 20px; left: 20px; }
+      .actions { top: 18px; right: 20px; }
       .mark .txt { font-size: 8px; }
-      .photo-hero .bijschrift { bottom: 68px; font-size: 15px; }
-      .controls { bottom: 24px; }
-      .modal { padding: 28px 24px; }
+      .slide { padding: 60px 24px; }
+      .eyebrow { font-size: 10px; margin-bottom: 32px; letter-spacing: 0.36em; }
+      .name-hero { font-size: 68px; }
+      .name-full { font-size: 34px; }
+      .name-full .first { font-size: 0.7em; }
+      .widow-name { font-size: 52px; }
+      .poem { font-size: 22px; line-height: 1.5; }
+      .places { flex-direction: column; gap: 12px; margin-top: 24px; }
+      .places .divider { display: none; }
+      .family { grid-template-columns: 1fr; gap: 24px; max-width: 320px; }
+      .controls { bottom: 24px; padding: 5px 10px; }
+      .progress { bottom: 14px; }
+      .kaart-showcase img { max-height: 68vh; }
+      .modal { padding: 32px 24px; }
     }
   </style>
 </head>
 <body>
-  <div class="env front" id="env"></div>
+  <div class="ambient">
+    <img src="assets/orchid-ambient.jpg" alt="" aria-hidden="true" />
+  </div>
 
   <main class="stage" id="stage">
     <div class="laden" id="laden"><p>Bezig met laden…</p></div>
@@ -510,6 +766,7 @@
       </button>
       <span class="teller" id="teller">01 / 01</span>
     </div>
+    <div class="progress" id="progress"></div>
   </div>
 
   <!-- Wachtwoord Modal -->
@@ -540,7 +797,7 @@
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
           <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4M17 8l-5-5-5 5M12 3v12" stroke-linecap="round" stroke-linejoin="round" />
         </svg>
-        <p><strong>Klik om foto's te kiezen</strong><br />of sleep ze hierheen</p>
+        <p><strong>Kies foto's</strong><br />of sleep ze hierheen</p>
         <input type="file" id="bestand-input" accept="image/*" multiple style="display: none" />
       </div>
       <div class="preview-lijst" id="preview-lijst"></div>
@@ -567,8 +824,8 @@
         </label>
       </div>
       <div class="veld">
-        <label for="interval-input">Seconden per foto</label>
-        <input type="number" id="interval-input" min="2" max="30" value="7" />
+        <label for="interval-input">Seconden per dia</label>
+        <input type="number" id="interval-input" min="3" max="30" value="8" />
       </div>
       <div class="modal-acties">
         <button class="knop secundair" id="instellingen-annuleer">Annuleer</button>
@@ -583,9 +840,8 @@
     // ═════════════════════════════════════════════════════════════════
     //  🔧 CONFIG — VUL DEZE DRIE REGELS ZELF IN
     //
-    //  Waar vind je deze waarden? → Zie SETUP.md, stap 4.
-    //  Deze regels mag je gerust in de HTML laten staan (ook op GitHub);
-    //  de anon key van Supabase is bedoeld om publiek te zijn.
+    //  Waar vind je deze waarden? → Zie SETUP.md.
+    //  De anon key mag gerust publiek zijn; Supabase is er zo op ontworpen.
     // ═════════════════════════════════════════════════════════════════
     const SUPABASE_URL = "https://ibymeiaoceokhvrurken.supabase.co";        // bv. "https://abcdefg.supabase.co"
     const SUPABASE_ANON_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImlieW1laWFvY2Vva2h2cnVya2VuIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODM5MTY5NTYsImV4cCI6MjA5OTQ5Mjk1Nn0.wwld_abIshy4c9VAphGjdl2d3wyNJ3sG_J2P1T5nKuc";   // je "anon public" key uit Supabase
@@ -596,15 +852,128 @@
     const TABLE = "photos";
     const NAAM = "Willy";
 
-    const KAART_SLIDES = [
-      { src: "assets/rouwkaart-voor.jpg",  mood: "front",  alt: "Rouwkaart voorzijde — Willy van Veen 1934-2026" },
-      { src: "assets/rouwkaart-binnen.jpg", mood: "inside", alt: "Rouwkaart binnenzijde — gedicht en familie" },
-    ];
-
     const inst = {
       auto: localStorage.getItem("willy:auto") !== "nee",
-      interval: parseInt(localStorage.getItem("willy:interval") || "7", 10),
+      interval: parseInt(localStorage.getItem("willy:interval") || "8", 10),
     };
+
+    // ── The editorial slide sequence ──────────────────────────────────
+    const orchidMark = `
+      <svg viewBox="0 0 40 40" width="16" height="16">
+        <g transform="translate(20 22)" fill="currentColor">
+          <ellipse cx="0" cy="-8" rx="3" ry="8" opacity="0.75" />
+          <ellipse cx="0" cy="-8" rx="3" ry="8" opacity="0.65" transform="rotate(72)" />
+          <ellipse cx="0" cy="-8" rx="3" ry="8" opacity="0.65" transform="rotate(-72)" />
+          <ellipse cx="0" cy="-7" rx="4.5" ry="6" opacity="0.75" transform="rotate(135)" />
+          <ellipse cx="0" cy="-7" rx="4.5" ry="6" opacity="0.75" transform="rotate(-135)" />
+          <ellipse cx="0" cy="1" rx="5" ry="4" opacity="0.85" />
+        </g>
+      </svg>`;
+
+    const editorialSlides = [
+      {
+        // 1. Opening — invocation
+        html: `
+          <div class="comp">
+            <div class="eyebrow">Ter herinnering aan</div>
+            <div class="name-hero">Willy</div>
+            <div class="rule">${orchidMark}</div>
+            <div class="dates big">1934 &nbsp;—&nbsp; 2026</div>
+          </div>`,
+      },
+      {
+        // 2. Full name & places
+        html: `
+          <div class="comp">
+            <div class="eyebrow">Naam &amp; leven</div>
+            <div class="name-full">
+              <span class="first">Willy</span>
+              van Veen-van Teunenbroek
+            </div>
+            <div class="places">
+              <span><span class="sym">✳</span>Amsterdam &middot; 4 maart 1934</span>
+              <span class="divider"></span>
+              <span><span class="sym">†</span>Hoorn &middot; 11 juli 2026</span>
+            </div>
+          </div>`,
+      },
+      {
+        // 3. Poem — the elegy
+        html: `
+          <div class="comp">
+            <div class="eyebrow">Bericht</div>
+            <div class="poem">
+              <span class="line">Verwacht,</span>
+              <span class="line">maar toch nog onverwacht</span>
+              <span class="line">is rustig van ons heengegaan,</span>
+              <span class="line">onze lieve moeder, schoonmoeder,</span>
+              <span class="line">oma en oma-oma</span>
+            </div>
+          </div>`,
+      },
+      {
+        // 4. Weduwe
+        html: `
+          <div class="comp">
+            <div class="widow-label">Weduwe van</div>
+            <div class="widow-name">Gerrit van Veen</div>
+          </div>`,
+      },
+      {
+        // 5. Family
+        html: `
+          <div class="comp">
+            <div class="eyebrow">Zij laat na</div>
+            <div class="family">
+              <div class="col">
+                <div class="fam">
+                  <div class="parents">Willy &amp; Casper</div>
+                </div>
+                <div class="fam">
+                  <div class="parents">Dian &amp; Sean</div>
+                  <div class="kids">Maran &middot; Tobian</div>
+                </div>
+                <div class="fam">
+                  <div class="parents">Britt</div>
+                  <div class="kids">Evin &middot; Luèn</div>
+                </div>
+                <div class="fam">
+                  <div class="parents">Lynn &amp; Rowdy</div>
+                  <div class="kids">Novy &middot; Vygo</div>
+                </div>
+              </div>
+              <div class="col">
+                <div class="fam">
+                  <div class="parents">René &amp; Ellen</div>
+                </div>
+                <div class="fam">
+                  <div class="parents">Manon &amp; Marc</div>
+                </div>
+              </div>
+            </div>
+          </div>`,
+      },
+      {
+        // 6. Rouwkaart voorzijde as showcase
+        html: `
+          <div class="kaart-showcase comp">
+            <div class="eyebrow">De rouwkaart</div>
+            <div class="card-wrap">
+              <img src="assets/rouwkaart-voor.jpg" alt="Rouwkaart voorzijde" />
+            </div>
+          </div>`,
+      },
+      {
+        // 7. Rouwkaart binnenzijde
+        html: `
+          <div class="kaart-showcase comp">
+            <div class="eyebrow gold">De binnenzijde</div>
+            <div class="card-wrap">
+              <img src="assets/rouwkaart-binnen.jpg" alt="Rouwkaart binnenzijde" />
+            </div>
+          </div>`,
+      },
+    ];
 
     if (!SUPABASE_URL || !SUPABASE_ANON_KEY) {
       toonSetup();
@@ -619,12 +988,12 @@
           <p class="intro">De diashow is bijna klaar om Willy's herinneringen te tonen. Er is nog één stap: koppelen met Supabase.</p>
           <div class="stap">
             <h3>Open <code>index.html</code></h3>
-            <p>Zoek bovenin het <code>&lt;script&gt;</code>-blok het commentaar 🔧 CONFIG. Daaronder staan drie regels om zelf in te vullen:</p>
-            <p><code>SUPABASE_URL</code>, <code>SUPABASE_ANON_KEY</code> en <code>UPLOAD_WACHTWOORD</code>.</p>
+            <p>Zoek bovenin het <code>&lt;script&gt;</code>-blok naar 🔧 CONFIG.</p>
+            <p>Vul in tussen de aanhalingstekens: <code>SUPABASE_URL</code>, <code>SUPABASE_ANON_KEY</code>, <code>UPLOAD_WACHTWOORD</code>.</p>
           </div>
           <div class="stap">
             <h3>Volg SETUP.md</h3>
-            <p>Daarin staat stap voor stap hoe je die drie waarden in Supabase vindt en waar je ze plakt.</p>
+            <p>Stap-voor-stap: Supabase → SQL runnen → keys ophalen → GitHub Pages aanzetten. ~15 minuten.</p>
           </div>
         </div>`;
     }
@@ -639,7 +1008,7 @@
 
     async function laadFotos(supabase) {
       const { data, error } = await supabase.from(TABLE).select("*").order("created_at", { ascending: true });
-      if (error) { console.error("Fout bij ophalen foto's:", error); return []; }
+      if (error) { console.error(error); return []; }
       return data.map((r) => {
         const { data: u } = supabase.storage.from(BUCKET).getPublicUrl(r.storage_path);
         return { url: u.publicUrl, bijschrift: r.caption || "" };
@@ -653,8 +1022,16 @@
 
     function startDiashow(supafotos) {
       slides = [
-        ...KAART_SLIDES.map((k) => ({ kaart: true, src: k.src, alt: k.alt, mood: k.mood })),
-        ...supafotos.map((f) => ({ kaart: false, url: f.url, bijschrift: f.bijschrift, mood: "photo" })),
+        ...editorialSlides,
+        ...supafotos.map((f) => ({
+          isPhoto: true,
+          html: `
+            <div class="comp photo-slide">
+              <div class="eyebrow">Herinnering</div>
+              <img src="${f.url}" alt="Herinnering aan ${NAAM}" />
+              ${f.bijschrift ? `<div class="bijschrift">${escapeHTML(f.bijschrift)}</div>` : ""}
+            </div>`,
+        })),
       ];
 
       const stage = document.getElementById("stage");
@@ -662,20 +1039,15 @@
 
       slides.forEach((s, i) => {
         const div = document.createElement("div");
-        div.className = "foto";
+        div.className = "slide";
         div.dataset.i = i;
-        div.dataset.mood = s.mood;
-        if (s.kaart) {
-          div.innerHTML = `<div class="kaart-hero"><img src="${s.src}" alt="${escapeHTML(s.alt)}" /></div>`;
-        } else {
-          div.innerHTML = `
-            <div class="photo-hero">
-              <img src="${s.url}" alt="Herinnering aan ${NAAM}" />
-              ${s.bijschrift ? `<div class="bijschrift">${escapeHTML(s.bijschrift)}</div>` : ""}
-            </div>`;
-        }
+        div.innerHTML = s.html;
         stage.appendChild(div);
       });
+
+      // Progress dots
+      const progress = document.getElementById("progress");
+      progress.innerHTML = slides.map(() => `<div class="dot"></div>`).join("");
 
       toon(0);
       if (inst.auto && slides.length > 1) speel();
@@ -686,11 +1058,13 @@
     function toon(i) {
       if (slides.length === 0) return;
       huidig = (i + slides.length) % slides.length;
-      document.querySelectorAll(".foto").forEach((el) => {
-        el.classList.toggle("actief", parseInt(el.dataset.i) === huidig);
+      document.querySelectorAll(".slide").forEach((el) => {
+        el.classList.toggle("active", parseInt(el.dataset.i) === huidig);
+      });
+      document.querySelectorAll(".progress .dot").forEach((el, idx) => {
+        el.classList.toggle("active", idx === huidig);
       });
       document.getElementById("teller").textContent = `${fmt(huidig + 1)} / ${fmt(slides.length)}`;
-      document.getElementById("env").className = `env ${slides[huidig].mood}`;
     }
 
     const volg = () => toon(huidig + 1);
@@ -840,7 +1214,7 @@
       document.getElementById("instellingen-annuleer").onclick = () => verbergModal("modal-instellingen");
       document.getElementById("instellingen-ok").onclick = () => {
         inst.auto = document.getElementById("auto-check").checked;
-        inst.interval = Math.max(2, Math.min(30, parseInt(document.getElementById("interval-input").value, 10) || 7));
+        inst.interval = Math.max(3, Math.min(30, parseInt(document.getElementById("interval-input").value, 10) || 8));
         localStorage.setItem("willy:auto", inst.auto ? "ja" : "nee");
         localStorage.setItem("willy:interval", inst.interval);
         verbergModal("modal-instellingen");
