@@ -43,34 +43,50 @@
       font-feature-settings: "kern", "liga", "onum";
     }
 
-    /* ─── AMBIENT — orchid photograph as the atmosphere ─── */
+    /* ─── AMBIENT — orchid photograph as the visible atmosphere ─── */
     .ambient {
       position: fixed;
-      inset: -8%;
+      inset: 0;
       z-index: 0;
       overflow: hidden;
     }
     .ambient img {
-      width: 100%;
-      height: 100%;
-      object-fit: cover;
-      object-position: center 30%;
-      filter: blur(24px) saturate(0.9) brightness(1.08);
-      transform: scale(1.15);
-      animation: kbAmbient 90s ease-in-out infinite alternate;
+      position: absolute;
+      left: 50%;
+      top: 0;
+      width: max(1400px, 130vw);
+      height: auto;
+      transform: translateX(-50%);
+      filter: saturate(1.02);
+      animation: floatOrchid 60s ease-in-out infinite alternate;
     }
-    @keyframes kbAmbient {
-      0%   { transform: scale(1.15) translate(0, 0); }
-      100% { transform: scale(1.28) translate(-1.5%, -1%); }
+    @keyframes floatOrchid {
+      0%   { transform: translateX(-50%) scale(1)    translateY(0); }
+      100% { transform: translateX(-50%) scale(1.04) translateY(-1.5%); }
     }
-    /* creamy wash + vignette over ambient so text always reads */
+    /* Soft creamy fade at the bottom so text sits on a clean surface,
+       but the orchid stays fully visible in the upper composition */
     .ambient::after {
       content: "";
       position: absolute;
       inset: 0;
       background:
-        radial-gradient(85% 70% at 50% 45%, rgba(251, 246, 241, 0.72) 0%, rgba(251, 246, 241, 0.45) 55%, rgba(251, 246, 241, 0.85) 100%),
-        radial-gradient(65% 55% at 50% 50%, transparent 40%, rgba(74, 42, 62, 0.18) 100%);
+        linear-gradient(
+          180deg,
+          rgba(251, 246, 241, 0.0)   0%,
+          rgba(251, 246, 241, 0.05) 20%,
+          rgba(251, 246, 241, 0.35) 48%,
+          rgba(251, 246, 241, 0.7)  75%,
+          rgba(251, 246, 241, 0.88) 100%
+        );
+    }
+    /* When the interior card is shown, dim the orchid background so
+       the card reads as the primary subject */
+    body[data-mode="kaart"] .ambient img { opacity: 0.35; }
+    body[data-mode="kaart"] .ambient::after {
+      background: linear-gradient(180deg,
+        rgba(251, 246, 241, 0.6) 0%,
+        rgba(251, 246, 241, 0.75) 100%);
     }
 
     /* grain */
@@ -115,6 +131,15 @@
       max-width: 900px;
       width: 100%;
     }
+    /* When the orchid occupies the upper portion of the viewport,
+       push the text composition into the lower half */
+    .comp-lower {
+      align-content: end;
+      align-self: end;
+      justify-self: center;
+      padding-bottom: max(6vh, 40px);
+    }
+    .slide:has(.comp-lower) { place-items: end center; padding-bottom: 96px; }
     .comp > * {
       opacity: 0;
       transform: translateY(14px);
@@ -720,7 +745,7 @@
 </head>
 <body>
   <div class="ambient">
-    <img src="assets/orchid-ambient.jpg" alt="" aria-hidden="true" />
+    <img src="assets/orchid-ambient-large.jpg" alt="" aria-hidden="true" />
   </div>
 
   <main class="stage" id="stage">
@@ -858,17 +883,18 @@
     // ── Twee vaste openingsslides ─────────────────────────────────────
     const editorialSlides = [
       {
-        // 1. Opening — moeder / oma / oma-oma Willy
+        // 1. Opening — orchidee is de achtergrond; tekst leeft eronder
+        mode: "opening",
         html: `
-          <div class="comp">
+          <div class="comp comp-lower">
             <div class="eyebrow eyebrow-wide">Ter herinnering aan onze moeder, oma en oma-oma</div>
             <div class="name-hero">Willy</div>
-            <img class="orchid-hero" src="assets/orchid-ornament.jpg" alt="" aria-hidden="true" />
             <div class="dates big">1934 &nbsp;—&nbsp; 2026</div>
           </div>`,
       },
       {
         // 2. Rouwkaart binnenzijde — bevat gedicht, naam, familie
+        mode: "kaart",
         html: `
           <div class="kaart-showcase comp">
             <div class="card-wrap">
@@ -929,7 +955,7 @@
       const stage = document.getElementById("stage");
       const startIdx = slides.length;
       fotos.forEach((f, k) => {
-        slides.push({ isPhoto: true, html: `
+        slides.push({ isPhoto: true, mode: "photo", html: `
           <div class="comp photo-slide">
             <div class="eyebrow">Herinnering</div>
             <img src="${f.url}" alt="Herinnering aan ${NAAM}" />
@@ -991,6 +1017,8 @@
         el.classList.toggle("active", idx === huidig);
       });
       document.getElementById("teller").textContent = `${fmt(huidig + 1)} / ${fmt(slides.length)}`;
+      // Set body mode so ambient background reacts to slide type
+      document.body.dataset.mode = slides[huidig].mode || "photo";
     }
 
     const volg = () => toon(huidig + 1);
