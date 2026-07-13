@@ -257,12 +257,13 @@
     }
     .eyebrow-frame .txt {
       font-family: var(--sans);
-      font-size: clamp(9px, 0.95vw, 11px);
-      letter-spacing: 0.38em;
+      font-size: clamp(11px, 1.05vw, 13px);
+      letter-spacing: 0.28em;
       text-transform: uppercase;
-      color: var(--ink-warm);
+      color: var(--ink);
       white-space: nowrap;
-      font-weight: 400;
+      font-weight: 500;
+      text-shadow: 0 1px 12px rgba(251, 246, 241, 0.8);
     }
     @keyframes hairlineIn {
       from { transform: scaleX(0); opacity: 0; }
@@ -299,13 +300,14 @@
       font-family: var(--serif);
       font-style: italic;
       font-weight: 400;
-      font-size: clamp(120px, 20vw, 320px);
-      line-height: 0.88;
+      font-size: clamp(110px, 18vw, 280px);
+      line-height: 1;
       color: var(--ink);
       letter-spacing: -0.025em;
       text-wrap: balance;
       font-feature-settings: "kern", "liga", "dlig", "onum";
       text-shadow: 0 2px 40px rgba(251, 246, 241, 0.5);
+      padding-bottom: 0.14em;    /* room for descender on 'y' */
     }
     /* Surname — italic serif below hero, ceremonial */
     .name-surname {
@@ -313,10 +315,10 @@
       font-style: italic;
       font-weight: 400;
       font-size: clamp(24px, 3.4vw, 46px);
-      line-height: 1.1;
+      line-height: 1.15;
       color: var(--ink-warm);
       letter-spacing: -0.005em;
-      margin-top: 14px;
+      margin-top: clamp(20px, 3vh, 40px);
       text-wrap: balance;
     }
 
@@ -534,28 +536,39 @@
 
     .mark {
       position: absolute;
-      top: 30px;
+      top: 32px;
       left: 44px;
-      display: flex;
+      display: grid;
+      grid-template-columns: auto auto;
       align-items: center;
-      gap: 14px;
+      gap: 16px;
     }
-    .mark .mark-photo {
-      width: 68px;
-      height: 40px;
-      border-radius: 3px;
-      object-fit: cover;
-      object-position: 45% 40%;
-      box-shadow: 0 6px 18px rgba(140, 60, 110, 0.22);
+    .mark .rule-v {
+      width: 1px;
+      height: 32px;
+      background: linear-gradient(180deg, transparent, var(--rose-deep) 20%, var(--rose-deep) 80%, transparent);
+      opacity: 0.5;
     }
-    .mark .txt {
+    .mark .label {
+      display: grid;
+      gap: 3px;
+    }
+    .mark .label .eyebrow {
       font-family: var(--sans);
-      font-size: 9px;
-      letter-spacing: 0.42em;
+      font-size: 8.5px;
+      letter-spacing: 0.34em;
       text-transform: uppercase;
-      color: var(--ink-soft);
-      line-height: 1.5;
-      max-width: 180px;
+      color: var(--ink-warm);
+      margin: 0;
+      opacity: 0.72;
+    }
+    .mark .label .willy {
+      font-family: var(--serif);
+      font-style: italic;
+      font-size: 20px;
+      color: var(--ink);
+      line-height: 1;
+      letter-spacing: -0.005em;
     }
 
     .actions {
@@ -892,8 +905,11 @@
 
   <div class="chrome" id="chrome" style="display: none">
     <div class="mark">
-      <img class="mark-photo" src="assets/orchid-ornament.jpg" alt="" aria-hidden="true" />
-      <div class="txt">Ter herinnering<br />aan Willy</div>
+      <div class="rule-v"></div>
+      <div class="label">
+        <div class="eyebrow">Ter herinnering aan</div>
+        <div class="willy">Willy</div>
+      </div>
     </div>
     <div class="actions">
       <button class="icon-btn" id="knop-upload" title="Deel een foto" aria-label="Deel een foto">
