@@ -1,0 +1,1234 @@
+<!DOCTYPE html>
+<html lang="nl">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Ter herinnering aan Oma</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link
+    href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;1,400&family=Inter:wght@300;400;500&display=swap"
+    rel="stylesheet"
+  />
+  <style>
+    :root {
+      --bg: #faf7fb;
+      --bg-soft: #f3ecf5;
+      --paars: #7b4a9b;
+      --paars-diep: #4e2f66;
+      --lila: #c8a2c8;
+      --lila-zacht: #e8d5ea;
+      --tekst: #3a2c40;
+      --tekst-zacht: #6b5a72;
+      --wit: #ffffff;
+      --schaduw: 0 8px 40px rgba(123, 74, 155, 0.12);
+      --schaduw-diep: 0 20px 60px rgba(78, 47, 102, 0.25);
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    html,
+    body {
+      height: 100%;
+      background: var(--bg);
+      color: var(--tekst);
+      font-family: "Inter", sans-serif;
+      font-weight: 300;
+      overflow: hidden;
+    }
+
+    body::before {
+      content: "";
+      position: fixed;
+      inset: 0;
+      background: radial-gradient(
+          ellipse at top left,
+          var(--lila-zacht) 0%,
+          transparent 50%
+        ),
+        radial-gradient(
+          ellipse at bottom right,
+          rgba(200, 162, 200, 0.35) 0%,
+          transparent 55%
+        );
+      pointer-events: none;
+      z-index: 0;
+    }
+
+    /* ============ HEADER ============ */
+    header {
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      padding: 28px 40px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      z-index: 10;
+      background: linear-gradient(
+        to bottom,
+        rgba(250, 247, 251, 0.9),
+        transparent
+      );
+      pointer-events: none;
+    }
+
+    header .titel {
+      display: flex;
+      align-items: center;
+      gap: 14px;
+      pointer-events: auto;
+    }
+
+    header .orchidee {
+      width: 32px;
+      height: 32px;
+      opacity: 0.7;
+    }
+
+    header h1 {
+      font-family: "Cormorant Garamond", serif;
+      font-weight: 400;
+      font-size: 24px;
+      color: var(--paars-diep);
+      letter-spacing: 0.5px;
+    }
+
+    header h1 span {
+      font-style: italic;
+      color: var(--paars);
+    }
+
+    header .acties {
+      display: flex;
+      gap: 12px;
+      pointer-events: auto;
+    }
+
+    .icon-knop {
+      width: 44px;
+      height: 44px;
+      border-radius: 50%;
+      border: 1px solid rgba(123, 74, 155, 0.2);
+      background: rgba(255, 255, 255, 0.7);
+      backdrop-filter: blur(10px);
+      color: var(--paars);
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: all 0.3s ease;
+    }
+
+    .icon-knop:hover {
+      background: var(--paars);
+      color: var(--wit);
+      transform: translateY(-2px);
+      box-shadow: 0 6px 20px rgba(123, 74, 155, 0.3);
+    }
+
+    .icon-knop svg {
+      width: 18px;
+      height: 18px;
+    }
+
+    /* ============ DIASHOW ============ */
+    .diashow {
+      position: relative;
+      height: 100vh;
+      width: 100vw;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      z-index: 1;
+    }
+
+    .foto-container {
+      position: relative;
+      width: min(85vw, 1100px);
+      height: min(75vh, 720px);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .foto {
+      position: absolute;
+      max-width: 100%;
+      max-height: 100%;
+      opacity: 0;
+      transition: opacity 1.6s ease-in-out;
+      border-radius: 4px;
+      box-shadow: var(--schaduw-diep);
+      background: var(--wit);
+      padding: 20px 20px 60px 20px;
+    }
+
+    .foto.actief {
+      opacity: 1;
+    }
+
+    .foto img {
+      max-width: 100%;
+      max-height: calc(min(75vh, 720px) - 100px);
+      display: block;
+      object-fit: contain;
+    }
+
+    .foto .bijschrift {
+      position: absolute;
+      bottom: 18px;
+      left: 20px;
+      right: 20px;
+      text-align: center;
+      font-family: "Cormorant Garamond", serif;
+      font-style: italic;
+      font-size: 18px;
+      color: var(--tekst-zacht);
+      padding: 0 10px;
+    }
+
+    /* ============ CONTROLS ============ */
+    .controls {
+      position: fixed;
+      bottom: 32px;
+      left: 50%;
+      transform: translateX(-50%);
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      padding: 10px 14px;
+      background: rgba(255, 255, 255, 0.85);
+      backdrop-filter: blur(14px);
+      border-radius: 999px;
+      box-shadow: var(--schaduw);
+      z-index: 10;
+      border: 1px solid rgba(123, 74, 155, 0.1);
+    }
+
+    .controls .icon-knop {
+      background: transparent;
+      border: none;
+    }
+
+    .controls .icon-knop.groot {
+      width: 52px;
+      height: 52px;
+      background: var(--paars);
+      color: var(--wit);
+    }
+
+    .controls .icon-knop.groot:hover {
+      background: var(--paars-diep);
+    }
+
+    .controls .icon-knop.groot svg {
+      width: 22px;
+      height: 22px;
+    }
+
+    .teller {
+      font-size: 13px;
+      color: var(--tekst-zacht);
+      padding: 0 12px;
+      font-variant-numeric: tabular-nums;
+      letter-spacing: 0.5px;
+    }
+
+    /* ============ LEGE STAAT & LADEN ============ */
+    .leeg,
+    .laden {
+      text-align: center;
+      padding: 60px 40px;
+      max-width: 500px;
+    }
+
+    .leeg .orchidee-groot {
+      width: 80px;
+      height: 80px;
+      margin: 0 auto 24px;
+      opacity: 0.5;
+    }
+
+    .leeg h2 {
+      font-family: "Cormorant Garamond", serif;
+      font-weight: 300;
+      font-size: 32px;
+      color: var(--paars-diep);
+      margin-bottom: 12px;
+    }
+
+    .leeg p {
+      color: var(--tekst-zacht);
+      margin-bottom: 24px;
+      line-height: 1.6;
+    }
+
+    .knop {
+      background: var(--paars);
+      color: var(--wit);
+      border: none;
+      padding: 12px 28px;
+      border-radius: 999px;
+      font-family: "Inter", sans-serif;
+      font-size: 14px;
+      font-weight: 400;
+      letter-spacing: 0.5px;
+      cursor: pointer;
+      transition: all 0.3s ease;
+    }
+
+    .knop:hover {
+      background: var(--paars-diep);
+      transform: translateY(-2px);
+      box-shadow: 0 8px 24px rgba(123, 74, 155, 0.3);
+    }
+
+    .knop.secundair {
+      background: transparent;
+      color: var(--paars);
+      border: 1px solid var(--paars);
+    }
+
+    .knop.secundair:hover {
+      background: var(--paars);
+      color: var(--wit);
+    }
+
+    /* ============ MODAL ============ */
+    .modal-achtergrond {
+      position: fixed;
+      inset: 0;
+      background: rgba(78, 47, 102, 0.4);
+      backdrop-filter: blur(8px);
+      display: none;
+      align-items: center;
+      justify-content: center;
+      z-index: 100;
+      padding: 20px;
+    }
+
+    .modal-achtergrond.zichtbaar {
+      display: flex;
+    }
+
+    .modal {
+      background: var(--wit);
+      border-radius: 16px;
+      padding: 40px;
+      max-width: 500px;
+      width: 100%;
+      box-shadow: var(--schaduw-diep);
+      max-height: 90vh;
+      overflow-y: auto;
+    }
+
+    .modal h2 {
+      font-family: "Cormorant Garamond", serif;
+      font-weight: 400;
+      font-size: 28px;
+      color: var(--paars-diep);
+      margin-bottom: 8px;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .modal h2 .orchidee {
+      width: 24px;
+      height: 24px;
+    }
+
+    .modal p.uitleg {
+      color: var(--tekst-zacht);
+      font-size: 14px;
+      margin-bottom: 24px;
+      line-height: 1.6;
+    }
+
+    .veld {
+      margin-bottom: 18px;
+    }
+
+    .veld label {
+      display: block;
+      font-size: 12px;
+      color: var(--tekst-zacht);
+      margin-bottom: 6px;
+      letter-spacing: 0.5px;
+      text-transform: uppercase;
+    }
+
+    .veld input,
+    .veld textarea {
+      width: 100%;
+      padding: 12px 16px;
+      border: 1px solid var(--lila-zacht);
+      border-radius: 8px;
+      font-family: "Inter", sans-serif;
+      font-size: 14px;
+      color: var(--tekst);
+      background: var(--bg);
+      transition: all 0.2s ease;
+    }
+
+    .veld input:focus,
+    .veld textarea:focus {
+      outline: none;
+      border-color: var(--paars);
+      background: var(--wit);
+      box-shadow: 0 0 0 3px rgba(123, 74, 155, 0.1);
+    }
+
+    .veld textarea {
+      resize: vertical;
+      min-height: 60px;
+      font-family: "Cormorant Garamond", serif;
+      font-style: italic;
+      font-size: 16px;
+    }
+
+    .drop-zone {
+      border: 2px dashed var(--lila);
+      border-radius: 12px;
+      padding: 40px 20px;
+      text-align: center;
+      cursor: pointer;
+      transition: all 0.2s ease;
+      background: var(--bg-soft);
+      margin-bottom: 18px;
+    }
+
+    .drop-zone:hover,
+    .drop-zone.actief {
+      border-color: var(--paars);
+      background: var(--lila-zacht);
+    }
+
+    .drop-zone p {
+      color: var(--tekst-zacht);
+      font-size: 14px;
+    }
+
+    .drop-zone .icon {
+      width: 40px;
+      height: 40px;
+      color: var(--paars);
+      margin: 0 auto 12px;
+      opacity: 0.6;
+    }
+
+    .preview-lijst {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(80px, 1fr));
+      gap: 8px;
+      margin-bottom: 18px;
+    }
+
+    .preview {
+      position: relative;
+      aspect-ratio: 1;
+      border-radius: 6px;
+      overflow: hidden;
+      background: var(--bg-soft);
+    }
+
+    .preview img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+    }
+
+    .preview .verwijder {
+      position: absolute;
+      top: 4px;
+      right: 4px;
+      width: 20px;
+      height: 20px;
+      border-radius: 50%;
+      background: rgba(78, 47, 102, 0.8);
+      color: var(--wit);
+      border: none;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 12px;
+    }
+
+    .modal-acties {
+      display: flex;
+      gap: 10px;
+      justify-content: flex-end;
+      margin-top: 24px;
+    }
+
+    .melding {
+      padding: 12px 16px;
+      border-radius: 8px;
+      font-size: 13px;
+      margin-bottom: 18px;
+      display: none;
+    }
+
+    .melding.zichtbaar {
+      display: block;
+    }
+
+    .melding.fout {
+      background: #fdecef;
+      color: #a83a55;
+      border: 1px solid #f5c8d0;
+    }
+
+    .melding.info {
+      background: var(--lila-zacht);
+      color: var(--paars-diep);
+      border: 1px solid var(--lila);
+    }
+
+    /* ============ SETUP SCHERM ============ */
+    .setup {
+      max-width: 640px;
+      margin: 0 auto;
+      padding: 60px 40px;
+      overflow-y: auto;
+      max-height: 100vh;
+    }
+
+    .setup h1 {
+      font-family: "Cormorant Garamond", serif;
+      font-weight: 300;
+      font-size: 40px;
+      color: var(--paars-diep);
+      margin-bottom: 8px;
+      text-align: center;
+    }
+
+    .setup > p.intro {
+      text-align: center;
+      color: var(--tekst-zacht);
+      margin-bottom: 40px;
+      line-height: 1.6;
+    }
+
+    .setup .stap {
+      margin-bottom: 20px;
+      padding: 20px;
+      background: rgba(255, 255, 255, 0.6);
+      border-radius: 12px;
+      border: 1px solid var(--lila-zacht);
+    }
+
+    .setup .stap h3 {
+      font-family: "Cormorant Garamond", serif;
+      font-size: 20px;
+      color: var(--paars-diep);
+      margin-bottom: 8px;
+      font-weight: 500;
+    }
+
+    .setup .stap p {
+      font-size: 14px;
+      color: var(--tekst-zacht);
+      line-height: 1.6;
+      margin-bottom: 12px;
+    }
+
+    /* ============ RESPONSIVE ============ */
+    @media (max-width: 640px) {
+      header {
+        padding: 16px 20px;
+      }
+      header h1 {
+        font-size: 18px;
+      }
+      .foto-container {
+        width: 92vw;
+        height: 68vh;
+      }
+      .foto {
+        padding: 12px 12px 44px 12px;
+      }
+      .foto .bijschrift {
+        font-size: 15px;
+        bottom: 12px;
+      }
+      .modal {
+        padding: 28px 24px;
+      }
+      .controls {
+        bottom: 20px;
+      }
+    }
+  </style>
+</head>
+<body>
+  <!-- Orchidee SVG symbool -->
+  <svg width="0" height="0" style="position: absolute">
+    <defs>
+      <symbol id="orchidee" viewBox="0 0 64 64">
+        <g fill="currentColor">
+          <path d="M32 8c-3 6-2 10 0 14 2-4 3-8 0-14z" opacity="0.9" />
+          <path d="M18 20c2 5 6 8 12 8-4-4-8-6-12-8z" opacity="0.7" />
+          <path d="M46 20c-2 5-6 8-12 8 4-4 8-6 12-8z" opacity="0.7" />
+          <path d="M20 34c4 3 8 4 12 4-3-4-7-6-12-4z" opacity="0.8" />
+          <path d="M44 34c-4 3-8 4-12 4 3-4 7-6 12-4z" opacity="0.8" />
+          <ellipse cx="32" cy="30" rx="4" ry="6" opacity="1" />
+          <path
+            d="M32 40c0 4-1 12-1 16"
+            stroke="currentColor"
+            stroke-width="1.5"
+            fill="none"
+            opacity="0.5"
+          />
+        </g>
+      </symbol>
+    </defs>
+  </svg>
+
+  <!-- Header -->
+  <header id="header" style="display: none">
+    <div class="titel">
+      <svg class="orchidee"><use href="#orchidee" /></svg>
+      <h1 id="header-titel">
+        Ter herinnering aan <span>Oma</span>
+      </h1>
+    </div>
+    <div class="acties">
+      <button
+        class="icon-knop"
+        id="knop-upload"
+        title="Foto's toevoegen"
+        aria-label="Foto's toevoegen"
+      >
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8">
+          <path d="M12 5v14M5 12h14" stroke-linecap="round" />
+        </svg>
+      </button>
+      <button
+        class="icon-knop"
+        id="knop-instellingen"
+        title="Instellingen"
+        aria-label="Instellingen"
+      >
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8">
+          <circle cx="12" cy="12" r="3" />
+          <path
+            d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 1 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 1 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 1 1-2.83-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 1 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 1 1 2.83-2.83l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 1 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 1 1 2.83 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 1 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"
+          />
+        </svg>
+      </button>
+    </div>
+  </header>
+
+  <!-- Hoofdweergave -->
+  <main class="diashow" id="diashow">
+    <div class="laden" id="laden">
+      <p style="color: var(--tekst-zacht)">Bezig met laden…</p>
+    </div>
+  </main>
+
+  <!-- Controls -->
+  <div class="controls" id="controls" style="display: none">
+    <button class="icon-knop" id="knop-vorige" title="Vorige" aria-label="Vorige">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8">
+        <path d="M15 18l-6-6 6-6" stroke-linecap="round" stroke-linejoin="round" />
+      </svg>
+    </button>
+    <button class="icon-knop groot" id="knop-afspelen" title="Afspelen/Pauzeren" aria-label="Afspelen">
+      <svg id="icon-play" viewBox="0 0 24 24" fill="currentColor">
+        <path d="M8 5v14l11-7z" />
+      </svg>
+      <svg id="icon-pauze" viewBox="0 0 24 24" fill="currentColor" style="display: none">
+        <path d="M6 4h4v16H6zM14 4h4v16h-4z" />
+      </svg>
+    </button>
+    <button class="icon-knop" id="knop-volgende" title="Volgende" aria-label="Volgende">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8">
+        <path d="M9 18l6-6-6-6" stroke-linecap="round" stroke-linejoin="round" />
+      </svg>
+    </button>
+    <span class="teller" id="teller">1 / 1</span>
+  </div>
+
+  <!-- Wachtwoord Modal -->
+  <div class="modal-achtergrond" id="modal-wachtwoord">
+    <div class="modal">
+      <h2>
+        <svg class="orchidee" style="color: var(--paars)">
+          <use href="#orchidee" />
+        </svg>
+        Foto's toevoegen
+      </h2>
+      <p class="uitleg">
+        Voer het wachtwoord in om herinneringen van Oma te delen.
+      </p>
+      <div class="melding fout" id="melding-wachtwoord">
+        Wachtwoord klopt niet.
+      </div>
+      <div class="veld">
+        <label for="wachtwoord-input">Wachtwoord</label>
+        <input
+          type="password"
+          id="wachtwoord-input"
+          autocomplete="off"
+          placeholder="•••••••"
+        />
+      </div>
+      <div class="modal-acties">
+        <button class="knop secundair" id="wachtwoord-annuleer">Annuleer</button>
+        <button class="knop" id="wachtwoord-ok">Verder</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Upload Modal -->
+  <div class="modal-achtergrond" id="modal-upload">
+    <div class="modal">
+      <h2>
+        <svg class="orchidee" style="color: var(--paars)">
+          <use href="#orchidee" />
+        </svg>
+        Herinneringen delen
+      </h2>
+      <p class="uitleg">
+        Voeg één of meer foto's toe. Een bijschrift is niet verplicht — een
+        naam, plek of jaartal kan al genoeg zijn.
+      </p>
+
+      <div class="melding fout" id="melding-upload"></div>
+      <div class="melding info" id="melding-upload-info"></div>
+
+      <div class="drop-zone" id="drop-zone">
+        <svg
+          class="icon"
+          viewBox="0 0 24 24"
+          fill="none"
+          stroke="currentColor"
+          stroke-width="1.5"
+        >
+          <path
+            d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4M17 8l-5-5-5 5M12 3v12"
+            stroke-linecap="round"
+            stroke-linejoin="round"
+          />
+        </svg>
+        <p><strong>Klik om foto's te kiezen</strong><br />of sleep ze hierheen</p>
+        <input
+          type="file"
+          id="bestand-input"
+          accept="image/*"
+          multiple
+          style="display: none"
+        />
+      </div>
+
+      <div class="preview-lijst" id="preview-lijst"></div>
+
+      <div class="veld" id="bijschrift-veld" style="display: none">
+        <label for="bijschrift-input">Bijschrift (optioneel)</label>
+        <textarea
+          id="bijschrift-input"
+          placeholder="Bijvoorbeeld: Oma in de tuin, zomer 1978"
+        ></textarea>
+        <p style="font-size: 12px; color: var(--tekst-zacht); margin-top: 6px">
+          Wordt toegevoegd aan alle foto's die je nu uploadt.
+        </p>
+      </div>
+
+      <div class="modal-acties">
+        <button class="knop secundair" id="upload-annuleer">Annuleer</button>
+        <button class="knop" id="upload-verzend">Uploaden</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Instellingen Modal -->
+  <div class="modal-achtergrond" id="modal-instellingen">
+    <div class="modal">
+      <h2>
+        <svg class="orchidee" style="color: var(--paars)">
+          <use href="#orchidee" />
+        </svg>
+        Instellingen
+      </h2>
+      <p class="uitleg">
+        Deze instellingen worden alleen op dit apparaat opgeslagen.
+      </p>
+
+      <div class="veld">
+        <label for="oma-naam">Naam</label>
+        <input type="text" id="oma-naam" placeholder="Oma" />
+      </div>
+
+      <div class="veld">
+        <label>
+          <input type="checkbox" id="auto-afspelen-check" checked />
+          &nbsp; Diashow start automatisch
+        </label>
+      </div>
+
+      <div class="veld">
+        <label for="interval-input">Seconden per foto</label>
+        <input type="number" id="interval-input" min="2" max="30" value="5" />
+      </div>
+
+      <div class="modal-acties">
+        <button class="knop secundair" id="instellingen-annuleer">
+          Annuleer
+        </button>
+        <button class="knop" id="instellingen-ok">Opslaan</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Supabase JS SDK -->
+  <script type="module">
+    import { createClient } from "https://esm.sh/@supabase/supabase-js@2";
+
+    // ═════════════════════════════════════════════════════════════════
+    //  CONFIG — vul deze drie waarden in vóór het delen van de site
+    // ═════════════════════════════════════════════════════════════════
+    const SUPABASE_URL = ""; // bv. "https://xxxxxxxxxxxx.supabase.co"
+    const SUPABASE_ANON_KEY = ""; // de public anon key uit Supabase
+    const UPLOAD_WACHTWOORD = "orchidee"; // vervang door je eigen wachtwoord
+    // ═════════════════════════════════════════════════════════════════
+
+    const BUCKET = "photos";
+    const TABLE = "photos";
+
+    // ---- Instellingen (per apparaat, in localStorage) ----
+    const instellingen = {
+      naam: localStorage.getItem("oma:naam") || "Oma",
+      autoAfspelen: localStorage.getItem("oma:auto") !== "nee",
+      interval: parseInt(localStorage.getItem("oma:interval") || "5", 10),
+    };
+
+    // Als config niet ingevuld is: setup-scherm
+    if (!SUPABASE_URL || !SUPABASE_ANON_KEY) {
+      toonSetup();
+    } else {
+      const supabase = createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+      init(supabase);
+    }
+
+    function toonSetup() {
+      document.querySelector(".diashow").innerHTML = `
+        <div class="setup">
+          <h1>Bijna klaar</h1>
+          <p class="intro">
+            De diashow is bijna klaar om Oma's herinneringen te tonen.
+            Er is nog één stap: koppelen met Supabase.
+          </p>
+          <div class="stap">
+            <h3>1. Open <code>index.html</code></h3>
+            <p>Zoek bovenin het <code>&lt;script&gt;</code>-blok deze drie regels:</p>
+            <p style="font-family: monospace; font-size: 13px; background: var(--bg-soft); padding: 12px; border-radius: 6px;">
+              const SUPABASE_URL = ""<br />
+              const SUPABASE_ANON_KEY = ""<br />
+              const UPLOAD_WACHTWOORD = "orchidee"
+            </p>
+          </div>
+          <div class="stap">
+            <h3>2. Volg SETUP.md</h3>
+            <p>
+              In het bestand <strong>SETUP.md</strong> staat stap voor stap
+              hoe je een Supabase project maakt, de storage bucket en de
+              tabel opzet, en waar je de URL en key vandaan haalt.
+            </p>
+          </div>
+          <div class="stap">
+            <h3>3. Vervang de waarden en ververs deze pagina</h3>
+            <p>
+              Plak je Supabase URL en anon key, kies een eigen wachtwoord,
+              en de diashow verschijnt.
+            </p>
+          </div>
+        </div>`;
+      document.getElementById("laden")?.remove();
+    }
+
+    async function init(supabase) {
+      document.getElementById("header").style.display = "flex";
+      document.getElementById("header-titel").innerHTML =
+        `Ter herinnering aan <span>${escapeHTML(instellingen.naam)}</span>`;
+
+      const foto_s = await laadFotos(supabase);
+      startDiashow(foto_s);
+      koppelKnoppen(supabase);
+    }
+
+    async function laadFotos(supabase) {
+      const { data, error } = await supabase
+        .from(TABLE)
+        .select("*")
+        .order("created_at", { ascending: true });
+
+      if (error) {
+        console.error("Fout bij ophalen foto's:", error);
+        toonLeeg("Kon foto's niet ophalen. Controleer je Supabase configuratie.");
+        return [];
+      }
+
+      return data.map((rij) => {
+        const { data: url } = supabase.storage
+          .from(BUCKET)
+          .getPublicUrl(rij.storage_path);
+        return {
+          id: rij.id,
+          url: url.publicUrl,
+          bijschrift: rij.caption || "",
+        };
+      });
+    }
+
+    let fotos = [];
+    let huidig = 0;
+    let speeltAf = false;
+    let intervalId = null;
+
+    function startDiashow(_fotos) {
+      fotos = _fotos;
+      const diashow = document.getElementById("diashow");
+      document.getElementById("laden")?.remove();
+
+      if (fotos.length === 0) {
+        toonLeeg();
+        return;
+      }
+
+      diashow.innerHTML =
+        `<div class="foto-container" id="foto-container"></div>`;
+
+      const container = document.getElementById("foto-container");
+      fotos.forEach((foto, i) => {
+        const div = document.createElement("div");
+        div.className = "foto";
+        div.dataset.index = i;
+        div.innerHTML = `
+          <img src="${foto.url}" alt="Herinnering aan ${escapeHTML(instellingen.naam)}" />
+          ${foto.bijschrift ? `<div class="bijschrift">${escapeHTML(foto.bijschrift)}</div>` : ""}
+        `;
+        container.appendChild(div);
+      });
+
+      document.getElementById("controls").style.display = "flex";
+      toon(0);
+
+      if (instellingen.autoAfspelen && fotos.length > 1) {
+        speelAf();
+      }
+    }
+
+    function toonLeeg(bericht) {
+      document.getElementById("diashow").innerHTML = `
+        <div class="leeg">
+          <svg class="orchidee-groot" style="color: var(--paars)">
+            <use href="#orchidee" />
+          </svg>
+          <h2>${bericht ? "Even geduld" : "Nog geen herinneringen"}</h2>
+          <p>${bericht || "Klik op de + rechtsboven om de eerste foto's van " + escapeHTML(instellingen.naam) + " te delen."}</p>
+        </div>`;
+      document.getElementById("controls").style.display = "none";
+    }
+
+    function toon(i) {
+      if (fotos.length === 0) return;
+      huidig = (i + fotos.length) % fotos.length;
+      document.querySelectorAll(".foto").forEach((el) => {
+        el.classList.toggle("actief", parseInt(el.dataset.index) === huidig);
+      });
+      document.getElementById("teller").textContent =
+        `${huidig + 1} / ${fotos.length}`;
+    }
+
+    function volgende() {
+      toon(huidig + 1);
+    }
+    function vorige() {
+      toon(huidig - 1);
+    }
+
+    function speelAf() {
+      if (fotos.length < 2) return;
+      speeltAf = true;
+      clearInterval(intervalId);
+      intervalId = setInterval(volgende, instellingen.interval * 1000);
+      document.getElementById("icon-play").style.display = "none";
+      document.getElementById("icon-pauze").style.display = "block";
+    }
+
+    function pauzeer() {
+      speeltAf = false;
+      clearInterval(intervalId);
+      document.getElementById("icon-play").style.display = "block";
+      document.getElementById("icon-pauze").style.display = "none";
+    }
+
+    // ---- Knoppen ----
+    function koppelKnoppen(supabase) {
+      document.getElementById("knop-volgende").onclick = () => {
+        volgende();
+        if (speeltAf) speelAf(); // reset timer
+      };
+      document.getElementById("knop-vorige").onclick = () => {
+        vorige();
+        if (speeltAf) speelAf();
+      };
+      document.getElementById("knop-afspelen").onclick = () => {
+        speeltAf ? pauzeer() : speelAf();
+      };
+
+      // Toetsenbord
+      document.addEventListener("keydown", (e) => {
+        if (
+          document.activeElement.tagName === "INPUT" ||
+          document.activeElement.tagName === "TEXTAREA"
+        )
+          return;
+        if (e.key === "ArrowRight") volgende();
+        if (e.key === "ArrowLeft") vorige();
+        if (e.key === " ") {
+          e.preventDefault();
+          speeltAf ? pauzeer() : speelAf();
+        }
+      });
+
+      // Upload knop → eerst wachtwoord
+      document.getElementById("knop-upload").onclick = () => {
+        toonModal("modal-wachtwoord");
+        setTimeout(
+          () => document.getElementById("wachtwoord-input").focus(),
+          100
+        );
+      };
+
+      // Wachtwoord
+      const controleerWachtwoord = () => {
+        const w = document.getElementById("wachtwoord-input").value;
+        if (w === UPLOAD_WACHTWOORD) {
+          verbergModal("modal-wachtwoord");
+          document.getElementById("wachtwoord-input").value = "";
+          document
+            .getElementById("melding-wachtwoord")
+            .classList.remove("zichtbaar");
+          toonModal("modal-upload");
+        } else {
+          document
+            .getElementById("melding-wachtwoord")
+            .classList.add("zichtbaar");
+        }
+      };
+      document.getElementById("wachtwoord-ok").onclick = controleerWachtwoord;
+      document.getElementById("wachtwoord-input").onkeydown = (e) => {
+        if (e.key === "Enter") controleerWachtwoord();
+      };
+      document.getElementById("wachtwoord-annuleer").onclick = () => {
+        verbergModal("modal-wachtwoord");
+        document.getElementById("wachtwoord-input").value = "";
+      };
+
+      // Upload afhandelen
+      const dropZone = document.getElementById("drop-zone");
+      const bestandInput = document.getElementById("bestand-input");
+      let gekozenBestanden = [];
+
+      const kiezenAfhandelen = (bestanden) => {
+        for (const b of bestanden) {
+          if (b.type.startsWith("image/")) {
+            gekozenBestanden.push(b);
+          }
+        }
+        toonPreviews();
+      };
+
+      const toonPreviews = () => {
+        const lijst = document.getElementById("preview-lijst");
+        lijst.innerHTML = "";
+        gekozenBestanden.forEach((b, i) => {
+          const div = document.createElement("div");
+          div.className = "preview";
+          const url = URL.createObjectURL(b);
+          div.innerHTML = `
+            <img src="${url}" />
+            <button class="verwijder" data-i="${i}" title="Verwijder">×</button>
+          `;
+          lijst.appendChild(div);
+        });
+        lijst.querySelectorAll(".verwijder").forEach((btn) => {
+          btn.onclick = (e) => {
+            const idx = parseInt(e.currentTarget.dataset.i);
+            gekozenBestanden.splice(idx, 1);
+            toonPreviews();
+          };
+        });
+        document.getElementById("bijschrift-veld").style.display =
+          gekozenBestanden.length > 0 ? "block" : "none";
+      };
+
+      dropZone.onclick = () => bestandInput.click();
+      bestandInput.onchange = (e) => kiezenAfhandelen(e.target.files);
+
+      dropZone.ondragover = (e) => {
+        e.preventDefault();
+        dropZone.classList.add("actief");
+      };
+      dropZone.ondragleave = () => dropZone.classList.remove("actief");
+      dropZone.ondrop = (e) => {
+        e.preventDefault();
+        dropZone.classList.remove("actief");
+        kiezenAfhandelen(e.dataTransfer.files);
+      };
+
+      document.getElementById("upload-annuleer").onclick = () => {
+        verbergModal("modal-upload");
+        gekozenBestanden = [];
+        toonPreviews();
+        document.getElementById("bijschrift-input").value = "";
+        verbergMeldingen();
+      };
+
+      document.getElementById("upload-verzend").onclick = async () => {
+        if (gekozenBestanden.length === 0) {
+          toonFout("upload", "Kies eerst één of meer foto's.");
+          return;
+        }
+        const knop = document.getElementById("upload-verzend");
+        knop.disabled = true;
+        knop.textContent = "Bezig met uploaden…";
+        verbergMeldingen();
+
+        const bijschrift = document
+          .getElementById("bijschrift-input")
+          .value.trim();
+
+        let succes = 0;
+        let fouten = 0;
+        for (const bestand of gekozenBestanden) {
+          try {
+            const ext = bestand.name.split(".").pop() || "jpg";
+            const pad = `${crypto.randomUUID()}.${ext}`;
+            const { error: upFout } = await supabase.storage
+              .from(BUCKET)
+              .upload(pad, bestand, {
+                cacheControl: "3600",
+                upsert: false,
+              });
+            if (upFout) throw upFout;
+
+            const { error: dbFout } = await supabase
+              .from(TABLE)
+              .insert({
+                storage_path: pad,
+                caption: bijschrift || null,
+              });
+            if (dbFout) throw dbFout;
+            succes++;
+          } catch (err) {
+            console.error(err);
+            fouten++;
+          }
+        }
+
+        knop.disabled = false;
+        knop.textContent = "Uploaden";
+
+        if (fouten === 0) {
+          toonInfo(
+            "upload",
+            `${succes} foto${succes === 1 ? "" : "'s"} toegevoegd. Even de pagina verversen…`
+          );
+          setTimeout(() => window.location.reload(), 1200);
+        } else if (succes > 0) {
+          toonFout(
+            "upload",
+            `${succes} geüpload, ${fouten} mislukt. Controleer je verbinding en probeer opnieuw.`
+          );
+        } else {
+          toonFout(
+            "upload",
+            "Uploaden mislukt. Controleer je Supabase-configuratie (bucket-naam en RLS-regels)."
+          );
+        }
+      };
+
+      // Instellingen
+      document.getElementById("knop-instellingen").onclick = () => {
+        document.getElementById("oma-naam").value = instellingen.naam;
+        document.getElementById("auto-afspelen-check").checked =
+          instellingen.autoAfspelen;
+        document.getElementById("interval-input").value = instellingen.interval;
+        toonModal("modal-instellingen");
+      };
+      document.getElementById("instellingen-annuleer").onclick = () =>
+        verbergModal("modal-instellingen");
+      document.getElementById("instellingen-ok").onclick = () => {
+        instellingen.naam =
+          document.getElementById("oma-naam").value.trim() || "Oma";
+        instellingen.autoAfspelen = document.getElementById(
+          "auto-afspelen-check"
+        ).checked;
+        instellingen.interval = Math.max(
+          2,
+          Math.min(
+            30,
+            parseInt(document.getElementById("interval-input").value, 10) || 5
+          )
+        );
+        localStorage.setItem("oma:naam", instellingen.naam);
+        localStorage.setItem(
+          "oma:auto",
+          instellingen.autoAfspelen ? "ja" : "nee"
+        );
+        localStorage.setItem("oma:interval", instellingen.interval);
+        verbergModal("modal-instellingen");
+        window.location.reload();
+      };
+
+      // Modal sluiten met klik op achtergrond
+      document.querySelectorAll(".modal-achtergrond").forEach((el) => {
+        el.addEventListener("click", (e) => {
+          if (e.target === el) el.classList.remove("zichtbaar");
+        });
+      });
+    }
+
+    // ---- Utilities ----
+    function toonModal(id) {
+      document.getElementById(id).classList.add("zichtbaar");
+    }
+    function verbergModal(id) {
+      document.getElementById(id).classList.remove("zichtbaar");
+    }
+    function toonFout(waar, tekst) {
+      const el = document.getElementById(`melding-${waar}`);
+      el.textContent = tekst;
+      el.classList.add("zichtbaar");
+    }
+    function toonInfo(waar, tekst) {
+      const el = document.getElementById(`melding-${waar}-info`);
+      el.textContent = tekst;
+      el.classList.add("zichtbaar");
+    }
+    function verbergMeldingen() {
+      document
+        .querySelectorAll(".melding")
+        .forEach((m) => m.classList.remove("zichtbaar"));
+    }
+    function escapeHTML(s) {
+      return String(s)
+        .replace(/&/g, "&amp;")
+        .replace(/</g, "&lt;")
+        .replace(/>/g, "&gt;")
+        .replace(/"/g, "&quot;")
+        .replace(/'/g, "&#039;");
+    }
+  </script>
+</body>
+</html>
