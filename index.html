@@ -256,14 +256,16 @@
       transform-origin: left center;
     }
     .eyebrow-frame .txt {
-      font-family: var(--sans);
-      font-size: clamp(11px, 1.05vw, 13px);
-      letter-spacing: 0.28em;
-      text-transform: uppercase;
+      font-family: var(--serif);
+      font-style: italic;
+      font-size: clamp(15px, 1.6vw, 22px);
+      letter-spacing: 0.01em;
       color: var(--ink);
       white-space: nowrap;
-      font-weight: 500;
-      text-shadow: 0 1px 12px rgba(251, 246, 241, 0.8);
+      font-weight: 400;
+      text-shadow:
+        0 1px 24px rgba(251, 246, 241, 0.95),
+        0 0 8px rgba(251, 246, 241, 0.9);
     }
     @keyframes hairlineIn {
       from { transform: scaleX(0); opacity: 0; }
@@ -1042,7 +1044,7 @@
         html: `
           <div class="comp comp-lower opening-comp">
             <div class="eyebrow-frame">
-              <span class="txt">Ter herinnering aan onze moeder, oma en oma&#8209;oma</span>
+              <span class="txt">Ter herinnering aan onze (schoon)moeder, oma en oma&#8209;oma</span>
             </div>
             <div class="name-hero">Willy</div>
             <div class="name-surname">van Veen&#8209;van Teunenbroek</div>
