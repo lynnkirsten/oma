@@ -6,15 +6,15 @@
   <title>Ter herinnering aan Willy van Veen-van Teunenbroek</title>
   <style>
     :root {
-      --amber-warm: #fff8f4;
-      --pink-mist: #fbe4ef;
+      --cream: #fdf9f6;
+      --pink-wash: #fbe4ef;
       --pink-soft: #f2c8de;
       --pink-mid: #dea1c1;
       --pink-deep: #a5688f;
       --plum: #6b3b5c;
       --ink: #4d3f47;
       --ink-strong: #3d3138;
-      --ink-soft: rgba(77, 63, 71, 0.6);
+      --ink-soft: rgba(77, 63, 71, 0.62);
       --serif: "Iowan Old Style", "Palatino Linotype", Palatino,
         "Book Antiqua", Georgia, serif;
       --sans: system-ui, -apple-system, "Segoe UI", sans-serif;
@@ -25,77 +25,53 @@
     body {
       font-family: var(--serif);
       color: var(--ink);
-      background: var(--amber-warm);
+      background: var(--cream);
       position: relative;
       -webkit-font-smoothing: antialiased;
     }
 
-    /* ambient environment */
-    .environment {
+    /* ambient background — shifts colour per slide type */
+    .env {
       position: fixed;
       inset: 0;
       z-index: 0;
-      transition: background 3s cubic-bezier(0.4, 0, 0.2, 1);
+      transition: background 2.4s cubic-bezier(0.4, 0, 0.2, 1);
     }
-    .environment.mood-front {
+    .env.front {
       background:
-        radial-gradient(90% 60% at 50% 20%, #ffffff 0%, #fff8f4 45%, #fbe4ef 100%),
-        linear-gradient(180deg, #fff8f4 0%, #fbe4ef 100%);
+        radial-gradient(90% 70% at 50% 30%, #ffffff 0%, #fdf9f6 60%, #fbe4ef 100%);
     }
-    .environment.mood-inside {
+    .env.inside {
       background:
-        radial-gradient(80% 55% at 30% 50%, #f5cddf 0%, #e4b0cc 60%, #cc8fb5 100%),
-        linear-gradient(160deg, #f5cddf 0%, #cc8fb5 100%);
+        radial-gradient(80% 60% at 30% 50%, #f5cddf 0%, #e4b0cc 55%, #cc8fb5 100%);
     }
-    .environment.mood-photo {
+    .env.photo {
       background:
-        radial-gradient(70% 55% at 50% 40%, #fce6ee 0%, #f2c8de 60%, #dea1c1 100%);
+        radial-gradient(60% 55% at 50% 40%, #fdf1f6 0%, #f2c8de 60%, #dea1c1 100%);
     }
 
-    .sparkles {
-      position: fixed;
-      inset: 0;
-      z-index: 1;
-      pointer-events: none;
-      overflow: hidden;
-    }
-    .sparkles span {
-      position: absolute;
-      width: 4px;
-      height: 4px;
-      border-radius: 50%;
-      background: radial-gradient(circle, rgba(255,255,255,0.95) 0%, rgba(255,255,255,0.4) 40%, transparent 70%);
-      animation: drift 30s linear infinite;
-      opacity: 0;
-    }
-    @keyframes drift {
-      0% { transform: translate3d(0, 0, 0) scale(0.5); opacity: 0; }
-      10% { opacity: 0.8; }
-      50% { opacity: 0.6; }
-      90% { opacity: 0.4; }
-      100% { transform: translate3d(-40px, -160px, 0) scale(1.2); opacity: 0; }
-    }
-
+    /* faint grain for depth */
     body::after {
       content: "";
       position: fixed;
       inset: 0;
-      background-image: url("data:image/svg+xml;utf8,%3Csvg xmlns='http://www.w3.org/2000/svg' width='300' height='300'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='2' stitchTiles='stitch'/%3E%3CfeColorMatrix values='0 0 0 0 0.3 0 0 0 0 0.2 0 0 0 0 0.3 0 0 0 0.06 0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
-      opacity: 0.35;
+      background-image: url("data:image/svg+xml;utf8,%3Csvg xmlns='http://www.w3.org/2000/svg' width='300' height='300'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='2' stitchTiles='stitch'/%3E%3CfeColorMatrix values='0 0 0 0 0.3 0 0 0 0 0.2 0 0 0 0 0.3 0 0 0 0.05 0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+      opacity: 0.4;
       mix-blend-mode: multiply;
       pointer-events: none;
       z-index: 2;
     }
+
+    /* vignette */
     body::before {
       content: "";
       position: fixed;
       inset: 0;
-      background: radial-gradient(80% 70% at 50% 50%, transparent 40%, rgba(80, 40, 60, 0.15) 100%);
+      background: radial-gradient(85% 75% at 50% 50%, transparent 45%, rgba(80, 40, 60, 0.12) 100%);
       pointer-events: none;
       z-index: 3;
     }
 
-    /* ─── stage ───────────────────────────── */
     .stage {
       position: relative;
       height: 100vh;
@@ -104,75 +80,58 @@
       place-items: center;
       z-index: 5;
     }
+
     .foto {
       position: absolute;
       inset: 0;
       opacity: 0;
-      transition: opacity 2.2s cubic-bezier(0.4, 0, 0.2, 1);
+      transition: opacity 2s cubic-bezier(0.4, 0, 0.2, 1);
       display: grid;
       place-items: center;
       pointer-events: none;
     }
     .foto.actief { opacity: 1; pointer-events: auto; }
 
-    /* Rouwkaart hero (portrait card, floats in space) */
-    .card-hero {
+    /* Rouwkaart hero — the card as a physical object */
+    .kaart-hero {
       position: relative;
-      height: 92vh;
-      max-height: 92vh;
-      aspect-ratio: 660 / 966;
       display: grid;
       place-items: center;
+      max-width: 96vw;
     }
-    .card-hero .halo {
-      position: absolute;
-      inset: -30% -25%;
-      background: radial-gradient(ellipse at center,
-        rgba(255,255,255,0.55) 0%,
-        rgba(255,255,255,0.2) 35%,
-        transparent 65%);
-      filter: blur(30px);
-      z-index: -1;
-    }
-    .card-hero img {
-      height: 100%;
+    .kaart-hero img {
+      max-height: 92vh;
+      max-width: 96vw;
       width: auto;
-      max-width: none;
+      height: auto;
       display: block;
-      animation: kenBurns 22s ease-in-out infinite alternate;
-      filter: drop-shadow(0 40px 80px rgba(140,60,110,0.18))
-             drop-shadow(0 15px 30px rgba(140,60,110,0.1));
+      animation: kb 24s ease-in-out infinite alternate;
+      filter: drop-shadow(0 30px 60px rgba(140, 60, 110, 0.15))
+             drop-shadow(0 10px 25px rgba(140, 60, 110, 0.08));
     }
-    @keyframes kenBurns {
-      0%   { transform: scale(1) translate3d(0, 0, 0); }
-      100% { transform: scale(1.06) translate3d(-1%, -0.5%, 0); }
+    @keyframes kb {
+      0%   { transform: scale(1); }
+      100% { transform: scale(1.035); }
     }
 
-    /* Uploaded photos (full-bleed cinematic) */
+    /* Uploaded photo */
     .photo-hero {
       position: relative;
       width: 100vw;
       height: 100vh;
       display: grid;
       place-items: center;
-      overflow: hidden;
     }
     .photo-hero img {
-      max-width: 88vw;
-      max-height: 88vh;
+      max-width: 86vw;
+      max-height: 84vh;
       display: block;
-      animation: kenBurnsPhoto 22s ease-in-out infinite alternate;
-      filter: drop-shadow(0 40px 80px rgba(140,60,110,0.25));
-      background: white;
-      padding: 0;
-    }
-    @keyframes kenBurnsPhoto {
-      0%   { transform: scale(1); }
-      100% { transform: scale(1.05); }
+      animation: kb 24s ease-in-out infinite alternate;
+      filter: drop-shadow(0 40px 80px rgba(140, 60, 110, 0.25));
     }
     .photo-hero .bijschrift {
       position: absolute;
-      bottom: 88px;
+      bottom: 90px;
       left: 0;
       right: 0;
       text-align: center;
@@ -182,25 +141,24 @@
       color: var(--ink);
       padding: 0 40px;
       text-wrap: balance;
-      text-shadow: 0 1px 20px rgba(255,255,255,0.6);
       opacity: 0;
     }
     .foto.actief .photo-hero .bijschrift {
-      animation: captionFade 3s 1.4s ease-out forwards;
+      animation: capFade 2.5s 1s ease-out forwards;
     }
-    @keyframes captionFade {
-      from { opacity: 0; transform: translateY(10px); }
+    @keyframes capFade {
+      from { opacity: 0; transform: translateY(8px); }
       to   { opacity: 1; transform: translateY(0); }
     }
 
-    /* ─── chrome (auto-hide) ─────────────── */
+    /* Chrome — auto-hide */
     .chrome {
       position: fixed;
       inset: 0;
       z-index: 30;
       pointer-events: none;
       opacity: 1;
-      transition: opacity 0.6s ease;
+      transition: opacity 0.7s ease;
     }
     .chrome.hidden { opacity: 0; }
     .chrome > * { pointer-events: auto; }
@@ -231,19 +189,20 @@
       display: flex;
       gap: 8px;
     }
+
     .icon-btn {
       width: 40px;
       height: 40px;
       border-radius: 50%;
-      border: 1px solid rgba(77,63,71,0.14);
-      background: rgba(255,255,255,0.6);
+      border: 1px solid rgba(77, 63, 71, 0.14);
+      background: rgba(255, 255, 255, 0.6);
       backdrop-filter: blur(14px);
       -webkit-backdrop-filter: blur(14px);
       cursor: pointer;
       display: grid;
       place-items: center;
       color: var(--pink-deep);
-      transition: all 0.35s cubic-bezier(0.4, 0, 0.2, 1);
+      transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
       font-family: var(--sans);
     }
     .icon-btn:hover {
@@ -263,8 +222,8 @@
       align-items: center;
       gap: 6px;
       padding: 6px 12px;
-      background: rgba(255,255,255,0.55);
-      border: 1px solid rgba(77,63,71,0.1);
+      background: rgba(255, 255, 255, 0.55);
+      border: 1px solid rgba(77, 63, 71, 0.1);
       border-radius: 999px;
       backdrop-filter: blur(18px);
       -webkit-backdrop-filter: blur(18px);
@@ -285,7 +244,7 @@
       font-variant-numeric: tabular-nums;
     }
 
-    /* ─── laden / setup ──────────────── */
+    /* Setup screen */
     .laden, .setup {
       text-align: center;
       padding: 60px 40px;
@@ -303,27 +262,32 @@
     .setup .stap {
       margin-bottom: 18px;
       padding: 20px;
-      background: rgba(255,255,255,0.7);
+      background: rgba(255, 255, 255, 0.7);
       border-radius: 12px;
       border: 1px solid var(--pink-soft);
       text-align: left;
     }
-    .setup .stap h3 { color: var(--ink); font-size: 20px; margin-bottom: 6px; font-weight: 400; }
-    .setup .stap p { color: var(--ink-soft); font-size: 14px; line-height: 1.6; }
+    .setup .stap h3 {
+      color: var(--ink);
+      font-size: 20px;
+      margin-bottom: 6px;
+      font-weight: 400;
+    }
+    .setup .stap p { color: var(--ink-soft); font-size: 14px; line-height: 1.6; margin-bottom: 6px; }
     code {
       font-family: ui-monospace, "SF Mono", Menlo, monospace;
-      background: var(--pink-mist);
+      background: var(--pink-wash);
       padding: 2px 6px;
       border-radius: 4px;
       font-size: 13px;
       color: var(--pink-deep);
     }
 
-    /* ─── modal ─────────────────────── */
+    /* Modal */
     .modal-bg {
       position: fixed;
       inset: 0;
-      background: rgba(77,40,60,0.4);
+      background: rgba(77, 40, 60, 0.4);
       backdrop-filter: blur(8px);
       display: none;
       align-items: center;
@@ -338,7 +302,7 @@
       padding: 40px;
       max-width: 500px;
       width: 100%;
-      box-shadow: 0 30px 60px -20px rgba(140,90,130,0.35);
+      box-shadow: 0 30px 60px -20px rgba(140, 90, 130, 0.35);
       max-height: 90vh;
       overflow-y: auto;
     }
@@ -374,14 +338,14 @@
       font-family: var(--sans);
       font-size: 14px;
       color: var(--ink);
-      background: var(--amber-warm);
+      background: var(--cream);
       transition: all 0.2s ease;
     }
     .veld input:focus, .veld textarea:focus {
       outline: none;
       border-color: var(--pink-deep);
       background: white;
-      box-shadow: 0 0 0 3px rgba(165,104,143,0.12);
+      box-shadow: 0 0 0 3px rgba(165, 104, 143, 0.12);
     }
     .veld textarea {
       resize: vertical;
@@ -397,7 +361,7 @@
       text-align: center;
       cursor: pointer;
       transition: all 0.2s ease;
-      background: var(--pink-mist);
+      background: var(--pink-wash);
       margin-bottom: 18px;
     }
     .drop-zone:hover, .drop-zone.actief {
@@ -405,7 +369,12 @@
       background: var(--pink-soft);
     }
     .drop-zone p { color: var(--ink-soft); font-size: 14px; }
-    .drop-zone svg { width: 40px; height: 40px; color: var(--pink-deep); margin-bottom: 12px; opacity: 0.7; }
+    .drop-zone svg {
+      width: 40px; height: 40px;
+      color: var(--pink-deep);
+      margin-bottom: 12px;
+      opacity: 0.7;
+    }
     .preview-lijst {
       display: grid;
       grid-template-columns: repeat(auto-fill, minmax(80px, 1fr));
@@ -417,7 +386,7 @@
       aspect-ratio: 1;
       border-radius: 6px;
       overflow: hidden;
-      background: var(--pink-mist);
+      background: var(--pink-wash);
     }
     .preview img { width: 100%; height: 100%; object-fit: cover; }
     .preview .verwijder {
@@ -425,7 +394,7 @@
       top: 4px; right: 4px;
       width: 20px; height: 20px;
       border-radius: 50%;
-      background: rgba(77,40,60,0.8);
+      background: rgba(77, 40, 60, 0.8);
       color: white;
       border: none;
       cursor: pointer;
@@ -452,7 +421,11 @@
       letter-spacing: 0.05em;
     }
     .knop:hover { background: var(--plum); transform: translateY(-1px); }
-    .knop.secundair { background: transparent; color: var(--pink-deep); border: 1px solid var(--pink-deep); }
+    .knop.secundair {
+      background: transparent;
+      color: var(--pink-deep);
+      border: 1px solid var(--pink-deep);
+    }
     .knop.secundair:hover { background: var(--pink-deep); color: white; }
     .knop:disabled { opacity: 0.5; cursor: wait; transform: none; }
     .melding {
@@ -465,20 +438,17 @@
     }
     .melding.zichtbaar { display: block; }
     .melding.fout { background: #fce8ee; color: #a83a55; border: 1px solid #f5c8d0; }
-    .melding.info { background: var(--pink-mist); color: var(--pink-deep); border: 1px solid var(--pink-soft); }
+    .melding.info { background: var(--pink-wash); color: var(--pink-deep); border: 1px solid var(--pink-soft); }
 
     @media (prefers-reduced-motion: reduce) {
       .foto { transition-duration: 0.001s; }
-      .card-hero img, .photo-hero img { animation: none; }
-      .sparkles span { animation: none; opacity: 0; }
+      .kaart-hero img, .photo-hero img { animation: none; }
     }
     @media (max-width: 780px) {
       .mark, .actions { top: 20px; }
       .mark { left: 20px; }
       .actions { right: 20px; }
       .mark .txt { font-size: 8px; }
-      .card-hero { height: 84vh; }
-      .photo-hero img { max-width: 92vw; max-height: 78vh; }
       .photo-hero .bijschrift { bottom: 68px; font-size: 15px; }
       .controls { bottom: 24px; }
       .modal { padding: 28px 24px; }
@@ -486,8 +456,7 @@
   </style>
 </head>
 <body>
-  <div class="environment mood-front" id="env"></div>
-  <div class="sparkles" id="sparkles"></div>
+  <div class="env front" id="env"></div>
 
   <main class="stage" id="stage">
     <div class="laden" id="laden"><p>Bezig met laden…</p></div>
@@ -516,7 +485,7 @@
       <button class="icon-btn" id="knop-instellingen" title="Instellingen" aria-label="Instellingen">
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6">
           <circle cx="12" cy="12" r="3" />
-          <path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 1 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 1 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 1 1-2.83-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 1 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 1 1 2.83-2.83l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 1 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 1 1 2.83 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 1 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/>
+          <path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 1 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 1 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 1 1-2.83-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 1 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 1 1 2.83-2.83l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 1 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 1 1 2.83 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 1 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z" />
         </svg>
       </button>
     </div>
@@ -612,11 +581,15 @@
     import { createClient } from "https://esm.sh/@supabase/supabase-js@2";
 
     // ═════════════════════════════════════════════════════════════════
-    //  CONFIG — vul deze drie waarden in vóór het delen van de site
+    //  🔧 CONFIG — VUL DEZE DRIE REGELS ZELF IN
+    //
+    //  Waar vind je deze waarden? → Zie SETUP.md, stap 4.
+    //  Deze regels mag je gerust in de HTML laten staan (ook op GitHub);
+    //  de anon key van Supabase is bedoeld om publiek te zijn.
     // ═════════════════════════════════════════════════════════════════
-    const SUPABASE_URL = "";
-    const SUPABASE_ANON_KEY = "";
-    const UPLOAD_WACHTWOORD = "orchidee";
+    const SUPABASE_URL = "";        // bv. "https://abcdefg.supabase.co"
+    const SUPABASE_ANON_KEY = "";   // je "anon public" key uit Supabase
+    const UPLOAD_WACHTWOORD = "";   // kies zelf, bv. "willy-orchidee"
     // ═════════════════════════════════════════════════════════════════
 
     const BUCKET = "photos";
@@ -624,8 +597,8 @@
     const NAAM = "Willy";
 
     const KAART_SLIDES = [
-      { src: "assets/rouwkaart-voor.jpg", mood: "mood-front", alt: "Rouwkaart voorzijde — Willy van Veen 1934-2026" },
-      { src: "assets/rouwkaart-binnen.jpg", mood: "mood-inside", alt: "Rouwkaart binnenzijde — gedicht en familie" },
+      { src: "assets/rouwkaart-voor.jpg",  mood: "front",  alt: "Rouwkaart voorzijde — Willy van Veen 1934-2026" },
+      { src: "assets/rouwkaart-binnen.jpg", mood: "inside", alt: "Rouwkaart binnenzijde — gedicht en familie" },
     ];
 
     const inst = {
@@ -636,8 +609,7 @@
     if (!SUPABASE_URL || !SUPABASE_ANON_KEY) {
       toonSetup();
     } else {
-      const supabase = createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
-      init(supabase);
+      init(createClient(SUPABASE_URL, SUPABASE_ANON_KEY));
     }
 
     function toonSetup() {
@@ -647,14 +619,12 @@
           <p class="intro">De diashow is bijna klaar om Willy's herinneringen te tonen. Er is nog één stap: koppelen met Supabase.</p>
           <div class="stap">
             <h3>Open <code>index.html</code></h3>
-            <p>Zoek bovenin het <code>&lt;script&gt;</code>-blok deze drie regels en vul in:</p>
-            <p><code>const SUPABASE_URL = ""</code></p>
-            <p><code>const SUPABASE_ANON_KEY = ""</code></p>
-            <p><code>const UPLOAD_WACHTWOORD = "orchidee"</code></p>
+            <p>Zoek bovenin het <code>&lt;script&gt;</code>-blok het commentaar 🔧 CONFIG. Daaronder staan drie regels om zelf in te vullen:</p>
+            <p><code>SUPABASE_URL</code>, <code>SUPABASE_ANON_KEY</code> en <code>UPLOAD_WACHTWOORD</code>.</p>
           </div>
           <div class="stap">
             <h3>Volg SETUP.md</h3>
-            <p>In het bestand <strong>SETUP.md</strong> staat stap voor stap hoe je Supabase koppelt, de storage bucket en tabel opzet.</p>
+            <p>Daarin staat stap voor stap hoe je die drie waarden in Supabase vindt en waar je ze plakt.</p>
           </div>
         </div>`;
     }
@@ -664,15 +634,11 @@
       const fotos = await laadFotos(supabase);
       startDiashow(fotos);
       koppel(supabase);
-      spawnSparkles();
-      setupChromeAutoHide();
+      autoHideChrome();
     }
 
     async function laadFotos(supabase) {
-      const { data, error } = await supabase
-        .from(TABLE)
-        .select("*")
-        .order("created_at", { ascending: true });
+      const { data, error } = await supabase.from(TABLE).select("*").order("created_at", { ascending: true });
       if (error) { console.error("Fout bij ophalen foto's:", error); return []; }
       return data.map((r) => {
         const { data: u } = supabase.storage.from(BUCKET).getPublicUrl(r.storage_path);
@@ -688,7 +654,7 @@
     function startDiashow(supafotos) {
       slides = [
         ...KAART_SLIDES.map((k) => ({ kaart: true, src: k.src, alt: k.alt, mood: k.mood })),
-        ...supafotos.map((f) => ({ kaart: false, url: f.url, bijschrift: f.bijschrift, mood: "mood-photo" })),
+        ...supafotos.map((f) => ({ kaart: false, url: f.url, bijschrift: f.bijschrift, mood: "photo" })),
       ];
 
       const stage = document.getElementById("stage");
@@ -700,11 +666,7 @@
         div.dataset.i = i;
         div.dataset.mood = s.mood;
         if (s.kaart) {
-          div.innerHTML = `
-            <div class="card-hero">
-              <div class="halo"></div>
-              <img src="${s.src}" alt="${escapeHTML(s.alt)}" />
-            </div>`;
+          div.innerHTML = `<div class="kaart-hero"><img src="${s.src}" alt="${escapeHTML(s.alt)}" /></div>`;
         } else {
           div.innerHTML = `
             <div class="photo-hero">
@@ -728,8 +690,7 @@
         el.classList.toggle("actief", parseInt(el.dataset.i) === huidig);
       });
       document.getElementById("teller").textContent = `${fmt(huidig + 1)} / ${fmt(slides.length)}`;
-      const mood = slides[huidig].mood;
-      document.getElementById("env").className = `environment ${mood}`;
+      document.getElementById("env").className = `env ${slides[huidig].mood}`;
     }
 
     const volg = () => toon(huidig + 1);
@@ -750,26 +711,13 @@
       document.getElementById("icon-pauze").style.display = "none";
     }
 
-    function spawnSparkles() {
-      const c = document.getElementById("sparkles");
-      for (let i = 0; i < 18; i++) {
-        const s = document.createElement("span");
-        s.style.left = Math.random() * 100 + "%";
-        s.style.top = Math.random() * 100 + "%";
-        s.style.animationDelay = Math.random() * 10 + "s";
-        s.style.animationDuration = (24 + Math.random() * 14) + "s";
-        s.style.transform = `scale(${0.5 + Math.random()})`;
-        c.appendChild(s);
-      }
-    }
-
     let hideTimer = null;
-    function setupChromeAutoHide() {
+    function autoHideChrome() {
       const chrome = document.getElementById("chrome");
       const show = () => {
         chrome.classList.remove("hidden");
         clearTimeout(hideTimer);
-        hideTimer = setTimeout(() => chrome.classList.add("hidden"), 3500);
+        hideTimer = setTimeout(() => chrome.classList.add("hidden"), 4000);
       };
       document.addEventListener("mousemove", show);
       document.addEventListener("touchstart", show);
@@ -792,7 +740,6 @@
         toonModal("modal-wachtwoord");
         setTimeout(() => document.getElementById("wachtwoord-input").focus(), 100);
       };
-
       const check = () => {
         const w = document.getElementById("wachtwoord-input").value;
         if (w === UPLOAD_WACHTWOORD) {
@@ -880,7 +827,7 @@
           fout.textContent = `${succes} geüpload, ${fouten} mislukt. Probeer opnieuw.`;
           fout.classList.add("zichtbaar");
         } else {
-          fout.textContent = "Uploaden mislukt. Controleer Supabase-configuratie.";
+          fout.textContent = "Uploaden mislukt. Controleer of de SQL uit supabase-setup.sql is uitgevoerd.";
           fout.classList.add("zichtbaar");
         }
       };

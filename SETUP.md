@@ -1,171 +1,148 @@
-# Ter herinnering aan Oma — Setup
+# Ter herinnering aan Willy — Setup
 
-Deze handleiding neemt je stap voor stap mee door het koppelen van de
-diashow aan je Supabase project. Neem er rustig de tijd voor — je hoeft
-het maar één keer te doen.
+Deze handleiding brengt je in ~15 minuten van deze code naar een echte
+website die je met familie kunt delen.
 
-Nodig: **±10 minuten** en een Supabase account (heb je al).
+Je hebt nodig:
+- Een GitHub-account (heb je) → de code staat al in
+  `lynnkirsten/oma`
+- Een Supabase-account (heb je) → gratis
+- 15 minuten
 
 ---
 
-## Stap 1 — Nieuw Supabase project maken
+## Deel 1 — Supabase opzetten (10 min)
 
-1. Ga naar [supabase.com/dashboard](https://supabase.com/dashboard) en
-   log in.
+### Stap 1. Nieuw project
+
+1. Log in op [supabase.com/dashboard](https://supabase.com/dashboard).
 2. Klik rechtsboven op **New project**.
 3. Vul in:
-   - **Name**: `oma` (of iets anders — jij kiest)
-   - **Database password**: laat Supabase er een genereren en sla die
-     ergens veilig op. Je hebt hem later niet nodig voor de diashow,
-     maar wel als je ooit in de database wilt kijken.
-   - **Region**: kies iets dicht bij Nederland, bijvoorbeeld
-     **West EU (Ireland)**.
-4. Klik op **Create new project**. Het opzetten duurt ongeveer een
-   minuut.
+   - **Name**: `willy` (jouw keuze)
+   - **Database password**: laat Supabase 'n sterk wachtwoord genereren
+     en sla die ergens veilig op (heb je later nooit meer nodig).
+   - **Region**: **West EU (Ireland)** of **Frankfurt** — dicht bij NL.
+4. Klik **Create new project** en wacht ~1 minuut.
 
----
+### Stap 2. Storage bucket voor de foto's
 
-## Stap 2 — De opslag (bucket) aanmaken
-
-Hier komen de foto-bestanden zelf te staan.
-
-1. Klik in de linkerzijbalk op **Storage** (icoontje van een schijf).
-2. Klik op **New bucket**.
+1. Linkerzijbalk → **Storage** (schijf-icoon).
+2. Klik **New bucket**.
 3. Vul in:
-   - **Name**: `photos` (let op: exact zo, kleine letters)
-   - **Public bucket**: **aanzetten** ✓ (zodat de foto's zichtbaar zijn
-     op de site zonder inloggen)
-4. Klik op **Save**.
+   - **Name**: `photos` (exact zo, kleine letters)
+   - **Public bucket**: ✅ **aanzetten**
+4. Klik **Save**.
 
----
+### Stap 3. Tabel + toegangsregels (SQL)
 
-## Stap 3 — De tabel en toegangsregels aanmaken
-
-Nu maken we een tabel voor de bijschriften en volgorde, plus de regels
-die bepalen wie mag lezen en uploaden.
-
-1. Klik in de linkerzijbalk op **SQL Editor** (icoontje van een
-   database).
-2. Klik op **New query**.
-3. Open het bestand **`supabase-setup.sql`** uit deze repo, kopieer de
+1. Linkerzijbalk → **SQL Editor** (database-icoon).
+2. Klik **New query**.
+3. Open in deze repo het bestand **`supabase-setup.sql`**, kopieer de
    hele inhoud.
-4. Plak het in de SQL Editor.
+4. Plak in de SQL Editor.
 5. Klik rechtsonder op **Run**.
 
-Je hoort onderin de melding **"Success. No rows returned"** te zien. Dat
-is goed — het betekent dat alles is aangemaakt.
+Je hoort **"Success. No rows returned"** te zien. Klaar.
 
----
+### Stap 4. Twee waarden ophalen
 
-## Stap 4 — Je Supabase URL en anon key ophalen
-
-1. Klik in de linkerzijbalk op het **tandwiel** (Settings), helemaal
-   onderin.
-2. Klik op **API**.
-3. Je ziet twee dingen die je nodig hebt:
+1. Linkerzijbalk → **Settings** (tandwiel onderin) → **API**.
+2. Kopieer twee dingen naar Kladblok / Notes:
    - **Project URL** — begint met `https://` en eindigt op
      `.supabase.co`
-   - **Project API keys** → kies de rij **`anon` `public`** en klik op
-     **Copy**. Deze mag publiek gedeeld worden — hij is bewust bedoeld
-     voor je website.
+   - **Project API keys** → de rij **`anon` `public`** — die lange
+     string na "Copy" klikken
 
-> **Let op:** kopieer NIET de `service_role` key. Die geeft volledige
-> toegang tot je database en hoort geheim te blijven.
+> **Belangrijk om te weten:** de `anon public` key is **bedoeld om
+> publiek te zijn**. Supabase noemt hem letterlijk zo. Hij mag in de
+> HTML staan en op GitHub. De echte beveiliging zit in de "Row Level
+> Security" regels die de SQL van stap 3 heeft aangemaakt. Wat je
+> **nooit** deelt is de **`service_role`** key — die staat op dezelfde
+> pagina en geeft volledige toegang.
 
 ---
 
-## Stap 5 — Waarden in `index.html` invullen
+## Deel 2 — De twee sleutels invullen (2 min)
 
-1. Open `index.html` in een tekstverwerker.
-2. Zoek bovenin het `<script>`-blok naar deze regels:
+Nu plak je de twee waarden uit stap 4 op de juiste plek in `index.html`.
 
+### Optie A — via GitHub (makkelijkst)
+
+1. Ga naar https://github.com/lynnkirsten/oma
+2. Wissel bovenaan naar de branch
+   **`claude/memorial-slideshow-photos-10q1e0`**.
+3. Klik op **`index.html`**.
+4. Klik rechtsboven op het **potloodje** (Edit this file).
+5. Druk **Ctrl+F** (of Cmd+F op Mac) en zoek naar `🔧 CONFIG`.
+6. Je ziet drie regels:
    ```js
    const SUPABASE_URL = "";
    const SUPABASE_ANON_KEY = "";
-   const UPLOAD_WACHTWOORD = "orchidee";
+   const UPLOAD_WACHTWOORD = "";
    ```
+7. Vul in tussen de quotes:
+   - `SUPABASE_URL` → jouw project-URL
+   - `SUPABASE_ANON_KEY` → jouw anon public key
+   - `UPLOAD_WACHTWOORD` → een wachtwoord dat je met familie deelt
+     (bijv. `"willy-orchidee"`). Simpel is prima — dit is een
+     familie-website, geen bank.
+8. Scroll naar beneden, klik **Commit changes**.
 
-3. Vul in:
-   - `SUPABASE_URL` — plak je Project URL tussen de quotes.
-   - `SUPABASE_ANON_KEY` — plak je anon key tussen de quotes.
-   - `UPLOAD_WACHTWOORD` — kies een wachtwoord dat je met familie deelt.
-     Simpel is prima ("orchidee", "oma123", etc.). Deze site is voor
-     familie, geen bank.
+### Optie B — lokaal
 
-4. Sla het bestand op.
-
----
-
-## Stap 6 — Testen
-
-1. Open `index.html` in je browser (dubbelklikken werkt vaak, of sleep
-   het bestand in je browservenster).
-2. Je ziet een lege diashow met de tekst _"Nog geen herinneringen"_.
-3. Klik rechtsboven op het **+** icoontje.
-4. Voer je wachtwoord in.
-5. Kies één of meer foto's.
-6. Klik op **Uploaden**.
-
-Als de foto verschijnt: het werkt! 🌸
+1. Open `index.html` in een teksteditor (VS Code, Notepad++, TextEdit).
+2. Zoek naar `🔧 CONFIG` en vul dezelfde drie regels in.
+3. Sla op en push naar GitHub (of gebruik lokaal).
 
 ---
 
-## Stap 7 — Delen met familie
+## Deel 3 — De site live zetten (3 min)
 
-Om de site te delen met familie kun je hem gratis online zetten. Twee
-makkelijke opties:
+### GitHub Pages inschakelen
 
-### Optie A — GitHub Pages (aanbevolen, gratis)
+1. Ga naar https://github.com/lynnkirsten/oma
+2. Klik bovenin op **Settings**.
+3. Linkerzijbalk → **Pages**.
+4. Onder **Source**: kies **Deploy from a branch**.
+5. Onder **Branch**: kies
+   `claude/memorial-slideshow-photos-10q1e0` en `/ (root)`.
+6. Klik **Save**.
+7. Wacht 1–2 minuten.
 
-1. Push deze repo naar GitHub (dat gebeurt automatisch als Claude Code
-   je code committeert).
-2. Ga in de repo op github.com naar **Settings → Pages**.
-3. Onder **Source**: kies **Deploy from a branch**.
-4. **Branch**: kies de branch (bijvoorbeeld `main` of
-   `claude/memorial-slideshow-photos-10q1e0`) en **/ (root)**.
-5. Klik op **Save**.
-6. Na een paar minuten is de site live op iets als
-   `https://[jouw-naam].github.io/oma/`.
+Je site staat nu live op:
+```
+https://lynnkirsten.github.io/oma/
+```
 
-### Optie B — Netlify Drop (nog eenvoudiger)
-
-1. Ga naar [app.netlify.com/drop](https://app.netlify.com/drop).
-2. Sleep het `index.html` bestand in het venster.
-3. Netlify geeft je meteen een openbare URL.
+Deel die link met familie. Klaar.
 
 ---
 
-## Instellingen aanpassen
+## Deel 4 — Gebruiken
 
-Rechtsboven in de diashow zit een tandwieltje. Daar kun je:
-
-- De **naam** aanpassen die in de header staat (staat op "Oma" als
-  standaard).
-- **Automatisch afspelen** aan- of uitzetten.
-- Het **aantal seconden per foto** kiezen (2 tot 30).
-
-Deze instellingen worden lokaal in je browser opgeslagen — iedere
-bezoeker kan het naar zijn eigen voorkeur zetten.
-
----
-
-## Muziek toevoegen (later)
-
-Je hebt aangegeven dat muziek er nu nog niet in hoeft, maar wel later
-mogelijk moet zijn. Wanneer je zover bent: laat het me weten en ik voeg
-een muziek-upload en achtergrondspeler toe. De ruimte is er in het
-ontwerp al voor gereserveerd.
+- **Bezoekers** zien de rouwkaart-diashow direct.
+- **Foto's toevoegen**: klik rechtsboven op **+**, voer het wachtwoord
+  in dat je bij stap 2 hebt gekozen, sleep of kies foto's, klik
+  **Uploaden**.
+- **Diashow-tempo**: klik op het tandwieltje rechtsboven om
+  automatisch afspelen aan/uit te zetten of de snelheid aan te passen.
+- **Toetsenbord**: ← / → om door te bladeren, spatie om te
+  pauzeren.
+- **Controls verdwijnen** na 4 seconden zonder muisbeweging voor een
+  schone weergave — beweeg je muis en ze komen terug.
 
 ---
 
-## Vragen of problemen?
+## Problemen?
 
-Als iets niet werkt: kijk in de browser-console (rechtsklik → Inspect →
-Console tab) voor foutmeldingen. De meest voorkomende oorzaken:
+**"Bijna klaar" scherm blijft komen** → de twee waarden bij CONFIG zijn
+nog leeg. Ga terug naar Deel 2.
 
-- **Foto's verschijnen niet** → Bucket is niet publiek. Ga naar
-  Storage → photos → Settings → Public: aan.
-- **Uploaden mislukt** → De SQL uit stap 3 is niet uitgevoerd, of niet
-  volledig. Draai het bestand `supabase-setup.sql` nog een keer.
-- **De site blijft "Bijna klaar" tonen** → De SUPABASE_URL of
-  SUPABASE_ANON_KEY is niet ingevuld in `index.html`.
+**Uploaden mislukt** → de SQL uit `supabase-setup.sql` is (nog) niet
+uitgevoerd, of maar deels. Ga terug naar Deel 1, stap 3.
+
+**Foto's verschijnen niet** → de bucket `photos` in Supabase is niet
+public. Storage → photos → Settings → Public: **aan**.
+
+**Live site is nog niet online** → GitHub Pages heeft 1–2 minuten
+nodig na de eerste keer 'Save'. Ververs de pagina.
