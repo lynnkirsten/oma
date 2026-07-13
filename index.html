@@ -835,8 +835,6 @@
   </div>
 
   <script type="module">
-    import { createClient } from "https://esm.sh/@supabase/supabase-js@2";
-
     // ═════════════════════════════════════════════════════════════════
     //  🔧 CONFIG — VUL DEZE DRIE REGELS ZELF IN
     //
@@ -975,50 +973,74 @@
       },
     ];
 
-    if (!SUPABASE_URL || !SUPABASE_ANON_KEY) {
-      toonSetup();
-    } else {
-      init(createClient(SUPABASE_URL, SUPABASE_ANON_KEY));
-    }
-
-    function toonSetup() {
-      document.getElementById("stage").innerHTML = `
-        <div class="setup">
-          <h1>Bijna klaar</h1>
-          <p class="intro">De diashow is bijna klaar om Willy's herinneringen te tonen. Er is nog één stap: koppelen met Supabase.</p>
-          <div class="stap">
-            <h3>Open <code>index.html</code></h3>
-            <p>Zoek bovenin het <code>&lt;script&gt;</code>-blok naar 🔧 CONFIG.</p>
-            <p>Vul in tussen de aanhalingstekens: <code>SUPABASE_URL</code>, <code>SUPABASE_ANON_KEY</code>, <code>UPLOAD_WACHTWOORD</code>.</p>
-          </div>
-          <div class="stap">
-            <h3>Volg SETUP.md</h3>
-            <p>Stap-voor-stap: Supabase → SQL runnen → keys ophalen → GitHub Pages aanzetten. ~15 minuten.</p>
-          </div>
-        </div>`;
-    }
-
-    async function init(supabase) {
-      document.getElementById("chrome").style.display = "block";
-      const fotos = await laadFotos(supabase);
-      startDiashow(fotos);
-      koppel(supabase);
-      autoHideChrome();
-    }
-
-    async function laadFotos(supabase) {
-      const { data, error } = await supabase.from(TABLE).select("*").order("created_at", { ascending: true });
-      if (error) { console.error(error); return []; }
-      return data.map((r) => {
-        const { data: u } = supabase.storage.from(BUCKET).getPublicUrl(r.storage_path);
-        return { url: u.publicUrl, bijschrift: r.caption || "" };
-      });
-    }
-
+    // State (declareren vóór boot!)
     let slides = [];
     let huidig = 0;
     let speelt = false;
     let timer = null;
+    let supabase = null;
+
+    // ── BOOT: editoriale slides eerst, Supabase daarna ────────────────
+    document.getElementById("chrome").style.display = "block";
+    startDiashow([]);          // toon de editoriale sequentie direct
+    autoHideChrome();
+    koppelKnoppen();           // navigatie werkt meteen
+    (async () => {
+      if (!SUPABASE_URL || !SUPABASE_ANON_KEY) {
+        console.warn("Geen Supabase config — upload is uit; editorial toont wel");
+        return;
+      }
+      try {
+        const mod = await Promise.race([
+          import("https://esm.sh/@supabase/supabase-js@2"),
+          new Promise((_, r) => setTimeout(() => r(new Error("SDK timeout")), 8000)),
+        ]);
+        supabase = mod.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+        const fotos = await Promise.race([
+          laadFotos(supabase),
+          new Promise((res) => setTimeout(() => res([]), 6000)),
+        ]);
+        if (fotos.length > 0) voegFotoSlidesToe(fotos);
+        koppelUpload();
+      } catch (e) {
+        console.warn("Supabase niet beschikbaar:", e);
+      }
+    })();
+
+    async function laadFotos(supabase) {
+      try {
+        const { data, error } = await supabase.from(TABLE).select("*").order("created_at", { ascending: true });
+        if (error) throw error;
+        return data.map((r) => {
+          const { data: u } = supabase.storage.from(BUCKET).getPublicUrl(r.storage_path);
+          return { url: u.publicUrl, bijschrift: r.caption || "" };
+        });
+      } catch (e) {
+        console.error("laadFotos fout:", e);
+        return [];
+      }
+    }
+
+    function voegFotoSlidesToe(fotos) {
+      const stage = document.getElementById("stage");
+      const startIdx = slides.length;
+      fotos.forEach((f, k) => {
+        slides.push({ isPhoto: true, html: `
+          <div class="comp photo-slide">
+            <div class="eyebrow">Herinnering</div>
+            <img src="${f.url}" alt="Herinnering aan ${NAAM}" />
+            ${f.bijschrift ? `<div class="bijschrift">${escapeHTML(f.bijschrift)}</div>` : ""}
+          </div>` });
+        const div = document.createElement("div");
+        div.className = "slide";
+        div.dataset.i = startIdx + k;
+        div.innerHTML = slides[startIdx + k].html;
+        stage.appendChild(div);
+      });
+      const progress = document.getElementById("progress");
+      progress.innerHTML = slides.map(() => `<div class="dot"></div>`).join("");
+      toon(huidig);
+    }
 
     function startDiashow(supafotos) {
       slides = [
@@ -1099,7 +1121,7 @@
       show();
     }
 
-    function koppel(supabase) {
+    function koppelKnoppen() {
       document.getElementById("knop-volgende").onclick = () => { volg(); if (speelt) speel(); };
       document.getElementById("knop-vorige").onclick = () => { vorig(); if (speelt) speel(); };
       document.getElementById("knop-afspelen").onclick = () => (speelt ? pauzeer() : speel());
@@ -1110,10 +1132,38 @@
         if (e.key === " ") { e.preventDefault(); speelt ? pauzeer() : speel(); }
       });
 
+      document.getElementById("knop-instellingen").onclick = () => {
+        document.getElementById("auto-check").checked = inst.auto;
+        document.getElementById("interval-input").value = inst.interval;
+        toonModal("modal-instellingen");
+      };
+      document.getElementById("instellingen-annuleer").onclick = () => verbergModal("modal-instellingen");
+      document.getElementById("instellingen-ok").onclick = () => {
+        inst.auto = document.getElementById("auto-check").checked;
+        inst.interval = Math.max(3, Math.min(30, parseInt(document.getElementById("interval-input").value, 10) || 8));
+        localStorage.setItem("willy:auto", inst.auto ? "ja" : "nee");
+        localStorage.setItem("willy:interval", inst.interval);
+        verbergModal("modal-instellingen");
+        location.reload();
+      };
+
+      document.querySelectorAll(".modal-bg").forEach((el) => {
+        el.addEventListener("click", (e) => { if (e.target === el) el.classList.remove("zichtbaar"); });
+      });
+
+      // Upload button: opens password prompt (works regardless of Supabase state)
       document.getElementById("knop-upload").onclick = () => {
+        if (!supabase) {
+          const el = document.getElementById("melding-wachtwoord");
+          el.textContent = "Uploaden nog niet klaar — Supabase is niet verbonden.";
+          el.classList.add("zichtbaar");
+        }
         toonModal("modal-wachtwoord");
         setTimeout(() => document.getElementById("wachtwoord-input").focus(), 100);
       };
+    }
+
+    function koppelUpload() {
       const check = () => {
         const w = document.getElementById("wachtwoord-input").value;
         if (w === UPLOAD_WACHTWOORD) {
@@ -1206,24 +1256,6 @@
         }
       };
 
-      document.getElementById("knop-instellingen").onclick = () => {
-        document.getElementById("auto-check").checked = inst.auto;
-        document.getElementById("interval-input").value = inst.interval;
-        toonModal("modal-instellingen");
-      };
-      document.getElementById("instellingen-annuleer").onclick = () => verbergModal("modal-instellingen");
-      document.getElementById("instellingen-ok").onclick = () => {
-        inst.auto = document.getElementById("auto-check").checked;
-        inst.interval = Math.max(3, Math.min(30, parseInt(document.getElementById("interval-input").value, 10) || 8));
-        localStorage.setItem("willy:auto", inst.auto ? "ja" : "nee");
-        localStorage.setItem("willy:interval", inst.interval);
-        verbergModal("modal-instellingen");
-        location.reload();
-      };
-
-      document.querySelectorAll(".modal-bg").forEach((el) => {
-        el.addEventListener("click", (e) => { if (e.target === el) el.classList.remove("zichtbaar"); });
-      });
     }
 
     function toonModal(id) { document.getElementById(id).classList.add("zichtbaar"); }
